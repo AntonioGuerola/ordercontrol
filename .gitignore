@@ -1,0 +1,24 @@
+# Ignore archivos de Java / Maven (backend)
+backend/target/
+backend/.idea/
+backend/*.iml
+backend/logs/
+*.class
+*.log
+*.jar
+.mvn/
+
+# Ignore sistema operativo
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# Ignora configuración de entorno
+*.env
+
+# Ignorar node_modules si luego usas npm en frontend
+frontend/node_modules/
+
+# Ignorar carpetas específicas si se usan
+**/dist/
