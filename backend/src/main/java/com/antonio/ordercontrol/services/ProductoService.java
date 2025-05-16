@@ -99,5 +99,9 @@ public class ProductoService {
             throw new IllegalArgumentException("El tipo del producto no puede estar vacío.");
         }
     }
+
+    public List<Producto> getProductoPorIdCategoria(Long idCategoria){
+        return productoRepository.findByIdCategoriaIgnoreCase(idCategoria);
+    }
 }
 

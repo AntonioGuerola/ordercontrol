@@ -29,7 +29,7 @@ public class Comanda {
     @Lob
     @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false)
-    private EstadoComanda estado = EstadoComanda.PENDIENTE;
+    private EstadoComanda estado = EstadoComanda.ABIERTA;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario")

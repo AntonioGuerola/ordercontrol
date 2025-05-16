@@ -41,7 +41,7 @@ public class CuentaService {
     public Cuenta generarCuentaParaMesa(Long idMesa) {
         Mesa mesa = mesaRepository.findById(idMesa).orElseThrow(() -> new RuntimeException("Mesa no encontrada."));
 
-        List<Comanda> comandas = comandaRepository.findByIdMesaYEstado(mesa, EstadoComanda.CERRADO);
+        List<Comanda> comandas = comandaRepository.findByIdMesaYEstado(mesa, EstadoComanda.CERRADA);
 
         BigDecimal sumaTotal = comandas.stream().flatMap(comanda -> comanda.getComandaproductos().stream())
                 .map(comandaproducto -> comandaproducto.getPrecioUnitario()
@@ -53,7 +53,7 @@ public class CuentaService {
         cuenta.setHoraCobro(Instant.now());
 
         for (Comanda comanda : comandas){
-            comanda.setEstado(EstadoComanda.CERRADO.name());
+            comanda.setEstado(EstadoComanda.CERRADA.name());
         }
 
         comandaRepository.saveAll(comandas);
