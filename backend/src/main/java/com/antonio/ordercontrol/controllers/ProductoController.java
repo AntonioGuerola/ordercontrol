@@ -58,4 +58,9 @@ public class ProductoController {
         Boolean estado = cuerpo.get("disponible");
         return ResponseEntity.ok(productoService.cambiarDisponibilidad(id, estado));
     }
+
+    @GetMapping("/categoria/{id}")
+    public List<Producto> getProductosPorCategoria(@PathVariable Long id){
+        return productoService.getProductoPorIdCategoria(id);
+    }
 }

@@ -61,4 +61,14 @@ public class ComandaService {
     public List<Comanda> getComandasByUsuario(Long idUsuario){
         return comandaRepository.findByIdUsuario(idUsuario);
     }
+
+    public Optional<Comanda> getComandaActivaByMesa(Long idMesa){
+        return comandaRepository.findByIdMesaYEstado(idMesa, EstadoComanda.ABIERTA);
+    }
+
+    public void cerrarComanda(Long id){
+        Comanda comanda = comandaRepository.findById(id).orElseThrow(() -> new RuntimeException("Comanda no encontrada."));
+        comanda.setEstado(EstadoComanda.CERRADA.name());
+        comandaRepository.save(comanda);
+    }
 }

@@ -1,9 +1,13 @@
 package com.antonio.ordercontrol.services;
 
+import com.antonio.ordercontrol.dtos.ComandaProductoDTO;
 import com.antonio.ordercontrol.exceptions.RecordNotFoundException;
+import com.antonio.ordercontrol.models.Comanda;
 import com.antonio.ordercontrol.models.Comandaproducto;
+import com.antonio.ordercontrol.models.Producto;
 import com.antonio.ordercontrol.repositories.ComandaProductoRepository;
 import com.antonio.ordercontrol.repositories.ComandaRepository;
+import com.antonio.ordercontrol.repositories.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +20,8 @@ public class ComandaProductoService {
     private ComandaRepository comandaRepository;
     @Autowired
     private ComandaProductoRepository comandaProductoRepository;
+    @Autowired
+    private ProductoRepository productoRepository;
 
     public Comandaproducto createComandaProducto(Comandaproducto comandaProducto){
         return comandaProductoRepository.save(comandaProducto);
@@ -54,5 +60,17 @@ public class ComandaProductoService {
 
     public List<Comandaproducto> getComandaProductoByComandaId(Long id){
         return comandaProductoRepository.findByComandaId(id);
+    }
+
+    public Comandaproducto agregarProductoAComanda(Long idComanda, ComandaProductoDTO dto){
+        Comanda comanda = comandaRepository.findById(idComanda).orElseThrow(() -> new RuntimeException("Comanda no encontrada."));
+        Producto producto = productoRepository.findById(dto.getIdProducto()).orElseThrow(() -> new RuntimeException("Producto no encontrado."));
+
+        Comandaproducto comandaproducto = new Comandaproducto();
+        comandaproducto.setComanda(comanda);
+        comandaproducto.setProducto(producto);
+        comandaproducto.setCantidad(dto.getCantidad());
+        return comandaProductoRepository.save(comandaproducto);
+
     }
 }

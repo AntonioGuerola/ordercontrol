@@ -3,8 +3,10 @@ package com.antonio.ordercontrol.controllers;
 import com.antonio.ordercontrol.exceptions.RecordNotFoundException;
 import com.antonio.ordercontrol.models.Comanda;
 import com.antonio.ordercontrol.models.EstadoComanda;
+import com.antonio.ordercontrol.models.Mesa;
 import com.antonio.ordercontrol.services.ComandaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +17,11 @@ import java.util.List;
 public class ComandaController {
     @Autowired
     private ComandaService comandaService;
+
+    @GetMapping
+    public List<Comanda> getAllComandas(){
+        return comandaService.getAllComandas();
+    }
 
     @GetMapping
     public Comanda createComanda(@RequestBody Comanda comanda){
@@ -49,5 +56,16 @@ public class ComandaController {
     @GetMapping("/usuario/{idUsuario}")
     public List<Comanda> getComandaByUsuario(@PathVariable Long idUsuario){
         return comandaService.getComandasByUsuario(idUsuario);
+    }
+
+    @GetMapping("/mesa/{idMesa}/activa")
+    public ResponseEntity<Comanda> getComandaActiva(@PathVariable Long idMesa){
+        return comandaService.getComandaActivaByMesa(idMesa).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/{id}/cerrar")
+    public ResponseEntity<Void> cerrarComanda(@PathVariable Long id){
+        comandaService.cerrarComanda(id);
+        return ResponseEntity.ok().build();
     }
 }
