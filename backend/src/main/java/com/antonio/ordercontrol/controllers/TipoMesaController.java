@@ -1,9 +1,11 @@
 package com.antonio.ordercontrol.controllers;
 
+import com.antonio.ordercontrol.dtos.TipoMesaDTO;
 import com.antonio.ordercontrol.exceptions.RecordNotFoundException;
 import com.antonio.ordercontrol.models.TipoMesa;
 import com.antonio.ordercontrol.services.TipoMesaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,27 +17,28 @@ public class TipoMesaController {
     private TipoMesaService tipoMesaService;
 
     @GetMapping
-    public List<TipoMesa> getAllTipoMesa() {
-        return tipoMesaService.getAllTipoMesas();
+    public ResponseEntity<List<TipoMesaDTO>> getAllTipoMesa() {
+        return ResponseEntity.ok(tipoMesaService.getAllTipoMesas());
     }
 
     @GetMapping("/{id}")
-    public TipoMesa getTipoMesaById(@PathVariable Long id) throws RecordNotFoundException {
-        return tipoMesaService.getTipoMesaById(id);
+    public ResponseEntity<TipoMesaDTO> getTipoMesaById(@PathVariable Long id) throws RecordNotFoundException {
+        return ResponseEntity.ok(tipoMesaService.getTipoMesaById(id));
     }
 
     @PostMapping
-    public TipoMesa createTipoMesa(@RequestBody TipoMesa tipoMesa) {
-        return tipoMesaService.createMesa(tipoMesa);
+    public ResponseEntity<TipoMesaDTO> createTipoMesa(@RequestBody TipoMesaDTO tipoMesaDTO) {
+        return ResponseEntity.ok(tipoMesaService.createMesa(tipoMesaDTO));
     }
 
     @PutMapping("/{id}")
-    public TipoMesa updateTipomesa(@PathVariable Long id, @RequestBody TipoMesa tipoMesa) throws RecordNotFoundException {
-        return tipoMesaService.updateMesa(id, tipoMesa);
+    public ResponseEntity<TipoMesaDTO> updateTipomesa(@PathVariable Long id, @RequestBody TipoMesaDTO tipoMesaDTO) throws RecordNotFoundException {
+        return ResponseEntity.ok(tipoMesaService.updateMesa(id, tipoMesaDTO));
     }
 
     @PutMapping("/{id}")
-    public void deleteTipoMesa(@PathVariable Long id) throws RecordNotFoundException {
+    public ResponseEntity<String> deleteTipoMesa(@PathVariable Long id) throws RecordNotFoundException {
         tipoMesaService.deleteTipoMesa(id);
+        return ResponseEntity.ok("Tipo de mesa eliminado con éxito.");
     }
 }

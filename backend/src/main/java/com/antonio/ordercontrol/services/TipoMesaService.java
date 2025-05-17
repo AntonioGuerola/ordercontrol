@@ -1,7 +1,8 @@
 package com.antonio.ordercontrol.services;
 
+import com.antonio.ordercontrol.dtos.TipoMesaDTO;
 import com.antonio.ordercontrol.exceptions.RecordNotFoundException;
-import com.antonio.ordercontrol.models.Mesa;
+import com.antonio.ordercontrol.mappers.TipoMesaMapper;
 import com.antonio.ordercontrol.models.TipoMesa;
 import com.antonio.ordercontrol.repositories.TipoMesaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,43 +15,41 @@ public class TipoMesaService {
     @Autowired
     private TipoMesaRepository tipoMesaRepository;
 
-    public List<TipoMesa> getAllTipoMesas() {
-        return tipoMesaRepository.findAll();
+    public List<TipoMesaDTO> getAllTipoMesas() {
+        return tipoMesaRepository.findAll().stream().map(TipoMesaMapper::toTipoMesaDTO).toList();
     }
 
-    public TipoMesa getTipoMesaById(Long id) throws RecordNotFoundException {
-        return tipoMesaRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Tipo de mesa no encontrado.", id));
+    public TipoMesaDTO getTipoMesaById(Long id) throws RecordNotFoundException {
+        TipoMesa tipoMesa = tipoMesaRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Tipo de mesa no encontrado.", id));
+        return TipoMesaMapper.toTipoMesaDTO(tipoMesa);
     }
 
-    public TipoMesa createMesa(TipoMesa tipoMesa) {
-        validarTipoMesa(tipoMesa.getNombre());
-        return tipoMesaRepository.save(tipoMesa);
+    public TipoMesaDTO createMesa(TipoMesaDTO tipoMesaDTO) {
+        validarTipoMesaDTO(tipoMesaDTO);
+        TipoMesa tipoMesa = TipoMesaMapper.toTipoMesa(tipoMesaDTO);
+        tipoMesa =  tipoMesaRepository.save(tipoMesa);
+        return TipoMesaMapper.toTipoMesaDTO(tipoMesa);
     }
 
-    public TipoMesa updateMesa (Long id, TipoMesa tipoMesa) throws RecordNotFoundException {
-        TipoMesa tipoMesaExistente = getTipoMesaById(id);
-        tipoMesaExistente.setNombre(tipoMesa.getNombre());
-        return tipoMesaRepository.save(tipoMesaExistente);
+    public TipoMesaDTO updateMesa (Long id, TipoMesaDTO tipoMesaDTO) throws RecordNotFoundException {
+        TipoMesa tipoMesaExistente = tipoMesaRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("No existe un tipo de mesa con id: ", id));
+        TipoMesaMapper.updateTipoMesa(tipoMesaDTO, tipoMesaExistente);
+        tipoMesaExistente =  tipoMesaRepository.save(tipoMesaExistente);
+        return TipoMesaMapper.toTipoMesaDTO(tipoMesaExistente);
     }
 
     public void deleteTipoMesa(Long id) throws RecordNotFoundException {
-        TipoMesa tipoMesaExistente = getTipoMesaById(id);
+        TipoMesa tipoMesaExistente = tipoMesaRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("No existe un tipo de mesa con id: ", id));
         tipoMesaRepository.delete(tipoMesaExistente);
     }
 
-    private void  validarTipoMesa(String nombre) {
-        validarTipoMesa(nombre, null);
-    }
-
-    private void validarTipoMesa(String nombre, Long idTipoMesa) {
-        if (nombre == null || nombre.isBlank()) {
-            throw new IllegalStateException("El nombre del tipo de mesa no puede estar vacío.");
+    private void validarTipoMesaDTO(TipoMesaDTO tipoMesaDTO) {
+        if (tipoMesaDTO.getNombre() == null || tipoMesaDTO.getNombre().isBlank()) {
+            throw new IllegalArgumentException("El nombre del tipo de mesa no puede estar vacío.");
         }
 
-        tipoMesaRepository.findByNombreIgnoreCase(nombre).ifPresent(existing -> {
-            if (idTipoMesa != null || !existing.getId().equals(idTipoMesa)) {
-                throw new IllegalStateException("Ya existe un tipo de mesa con ese nombre.");
-            }
-        });
+        if (tipoMesaRepository.existsByNombreIgnoreCase(tipoMesaDTO.getNombre())) {
+            throw new IllegalArgumentException("Ya existe un tipo de mesa con ese nombre.");
+        }
     }
 }

@@ -23,6 +23,9 @@ public class TipoMesa {
     @OneToMany(mappedBy = "tipoMesa")
     private List<Mesa> mesas = new ArrayList<>();
 
+    public TipoMesa(Long id, String nombre) {
+    }
+
     public Integer getId() {
         return id;
     }
