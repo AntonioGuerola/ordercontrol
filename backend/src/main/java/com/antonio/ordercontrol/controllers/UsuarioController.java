@@ -1,6 +1,8 @@
 package com.antonio.ordercontrol.controllers;
 
+import com.antonio.ordercontrol.dtos.UsuarioDTO;
 import com.antonio.ordercontrol.exceptions.RecordNotFoundException;
+import com.antonio.ordercontrol.mappers.UsuarioMapper;
 import com.antonio.ordercontrol.models.RolUsuario;
 import com.antonio.ordercontrol.models.Usuario;
 import com.antonio.ordercontrol.services.UsuarioService;
@@ -18,12 +20,14 @@ public class UsuarioController {
     private UsuarioService usuarioService;
 
     @PostMapping
-    public Usuario createUsuario(@RequestBody Usuario usuario){
+    public UsuarioDTO createUsuario(@RequestBody UsuarioDTO usuarioDTO){
+        Usuario usuario = UsuarioMapper.toUsuario(usuarioDTO);
         return usuarioService.createUsuario(usuario);
     }
 
     @PutMapping("/{id}")
-    public Usuario updateUsuario(@PathVariable Long id, @RequestBody Usuario usuario) throws RecordNotFoundException {
+    public UsuarioDTO updateUsuario(@PathVariable Long id, @RequestBody UsuarioDTO usuarioDTO) throws RecordNotFoundException {
+        Usuario usuario = UsuarioMapper.toUsuario(usuarioDTO);
         return usuarioService.updateUsuario(id, usuario);
     }
 
@@ -33,12 +37,12 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    public Usuario getUsuarioById(@PathVariable Long id) throws RecordNotFoundException {
+    public UsuarioDTO getUsuarioById(@PathVariable Long id) throws RecordNotFoundException {
         return usuarioService.getUsuarioById(id);
     }
 
     @GetMapping
-    public List<Usuario> getAllUsuarios(){
+    public List<UsuarioDTO> getAllUsuarios(){
         return usuarioService.getAllUsuarios();
     }
 
@@ -46,7 +50,7 @@ public class UsuarioController {
     public ResponseEntity<?> getUsuariosByRol(@PathVariable String rol){
         try{
             RolUsuario rolUsuario = RolUsuario.valueOf(rol.toUpperCase());
-            List<Usuario> usuarios = usuarioService.getUsuariosByRol(rolUsuario);
+            List<UsuarioDTO> usuarios = usuarioService.getUsuariosByRol(rolUsuario);
             return ResponseEntity.ok(usuarios);
         } catch (IllegalArgumentException e){
             return ResponseEntity.badRequest().body("Rol inválido. Valores permitidos: ADMIN, CAMARERO o COCINERO.");
