@@ -1,21 +1,17 @@
 package com.antonio.ordercontrol.dtos;
 
+import com.antonio.ordercontrol.models.EstadoComanda;
+
+import java.time.Instant;
 import java.util.List;
 
 public class ComandaDTO {
     private Long id;
-    private String estado;
+    private Instant fechaCreacion;
     private Long idMesa;
-    private List<ComandaProductoDTO> productos;
-
-    public ComandaDTO(Long id, String estado, Long idMesa, List<ComandaProductoDTO> productos) {
-        this.id = id;
-        this.estado = estado;
-        this.idMesa = idMesa;
-        this.productos = productos;
-    }
-
-    public ComandaDTO() {}
+    private EstadoComanda estado;
+    private Long  idUsuario;
+    private Integer idCuenta;
 
     public Long getId() {
         return id;
@@ -25,12 +21,12 @@ public class ComandaDTO {
         this.id = id;
     }
 
-    public String getEstado() {
-        return estado;
+    public Instant getFechaCreacion() {
+        return fechaCreacion;
     }
 
-    public void setEstado(String estado) {
-        this.estado = estado;
+    public void setFechaCreacion(Instant fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
     }
 
     public Long getIdMesa() {
@@ -41,11 +37,27 @@ public class ComandaDTO {
         this.idMesa = idMesa;
     }
 
-    public List<ComandaProductoDTO> getProductos() {
-        return productos;
+    public EstadoComanda getEstado() {
+        return estado;
     }
 
-    public void setProductos(List<ComandaProductoDTO> productos) {
-        this.productos = productos;
+    public void setEstado(EstadoComanda estado) {
+        this.estado = estado;
+    }
+
+    public Long getIdUsuario() {
+        return idUsuario;
+    }
+
+    public void setIdUsuario(Long idUsuario) {
+        this.idUsuario = idUsuario;
+    }
+
+    public Integer getIdCuenta() {
+        return idCuenta;
+    }
+
+    public void setIdCuenta(Integer idCuenta) {
+        this.idCuenta = idCuenta;
     }
 }
