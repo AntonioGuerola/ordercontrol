@@ -1,5 +1,6 @@
 package com.antonio.ordercontrol.controllers;
 
+import com.antonio.ordercontrol.dtos.CuentaDTO;
 import com.antonio.ordercontrol.exceptions.RecordNotFoundException;
 import com.antonio.ordercontrol.models.Cuenta;
 import com.antonio.ordercontrol.services.CuentaService;
@@ -14,38 +15,39 @@ import java.util.List;
 @RequestMapping("/api/cuentas")
 @CrossOrigin(origins = "*")
 public class CuentaController {
+
     @Autowired
     private CuentaService cuentaService;
 
     @GetMapping
-    public List<Cuenta> getAllCuentas(){
+    public List<CuentaDTO> getAllCuentas(){
         return cuentaService.getAllCuentas();
     }
 
     @GetMapping("/{id}")
-    public Cuenta getCuentaById(@PathVariable Long id) throws RecordNotFoundException {
+    public CuentaDTO getCuentaById(@PathVariable Long id) throws RecordNotFoundException {
         return cuentaService.getCuentaById(id);
     }
 
     @GetMapping("/mesa/{idMesa}")
-    public List<Cuenta>  getCuentaByMesa(@PathVariable Long idMesa) {
+    public List<CuentaDTO>  getCuentaByMesa(@PathVariable Long idMesa) {
         return cuentaService.getCuentasByIdMesa(idMesa);
     }
 
     @PostMapping
-    public Cuenta createCuenta(@RequestBody Cuenta cuenta){
-        return cuentaService.createCuenta(cuenta);
+    public CuentaDTO createCuenta(@RequestBody CuentaDTO cuentaDTO){
+        return cuentaService.createCuenta(cuentaDTO);
     }
 
     @PostMapping("/generar/mesa/{idMesa}")
-    public ResponseEntity<Cuenta> generarCuenta(@PathVariable Long idMesa){
-        Cuenta cuenta = cuentaService.generarCuentaParaMesa(idMesa);
-        return new ResponseEntity<>(cuenta, HttpStatus.CREATED);
+    public ResponseEntity<CuentaDTO> generarCuenta(@PathVariable Long idMesa){
+        CuentaDTO cuentaDTO = cuentaService.generarCuentaParaMesa(idMesa);
+        return new ResponseEntity<>(cuentaDTO, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public Cuenta updateCuenta(@PathVariable Long id, @RequestBody Cuenta cuenta) throws RecordNotFoundException {
-        return cuentaService.updateCuenta(id, cuenta);
+    public CuentaDTO updateCuenta(@PathVariable Long id, @RequestBody CuentaDTO cuentaDTO) throws RecordNotFoundException {
+        return cuentaService.updateCuenta(id, cuentaDTO);
     }
 
     @DeleteMapping("/{id}")
