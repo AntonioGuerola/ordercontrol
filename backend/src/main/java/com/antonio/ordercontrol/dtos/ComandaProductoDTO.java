@@ -1,15 +1,29 @@
 package com.antonio.ordercontrol.dtos;
 
-public class ComandaProductoDTO {
-    private Long idProducto;
-    private int cantidad;
+import java.math.BigDecimal;
 
-    public ComandaProductoDTO(Long idProducto, int cantidad) {
-        this.idProducto = idProducto;
-        this.cantidad = cantidad;
+public class ComandaProductoDTO {
+    private Long id;
+    private Long idComanda;
+    private Long idProducto;
+    private Integer cantidad;
+    private BigDecimal precioUnitario;
+
+    public Long getId() {
+        return id;
     }
 
-    public ComandaProductoDTO() {}
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getIdComanda() {
+        return idComanda;
+    }
+
+    public void setIdComanda(Long idComanda) {
+        this.idComanda = idComanda;
+    }
 
     public Long getIdProducto() {
         return idProducto;
@@ -19,11 +33,19 @@ public class ComandaProductoDTO {
         this.idProducto = idProducto;
     }
 
-    public int getCantidad() {
+    public Integer getCantidad() {
         return cantidad;
     }
 
-    public void setCantidad(int cantidad) {
+    public void setCantidad(Integer cantidad) {
         this.cantidad = cantidad;
+    }
+
+    public BigDecimal getPrecioUnitario() {
+        return precioUnitario;
+    }
+
+    public void setPrecioUnitario(BigDecimal precioUnitario) {
+        this.precioUnitario = precioUnitario;
     }
 }
