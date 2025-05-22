@@ -2,12 +2,10 @@ package com.antonio.ordercontrol.controllers;
 
 import com.antonio.ordercontrol.dtos.ComandaProductoDTO;
 import com.antonio.ordercontrol.exceptions.RecordNotFoundException;
-import com.antonio.ordercontrol.models.Comandaproducto;
 import com.antonio.ordercontrol.services.ComandaProductoService;
-import com.antonio.ordercontrol.services.ComandaService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,47 +14,49 @@ import java.util.List;
 @RequestMapping("/api/comandaproductos")
 @CrossOrigin(origins = "*")
 public class ComandaProductoController {
+
     @Autowired
     private ComandaProductoService comandaProductoService;
 
     @GetMapping
-    public List<Comandaproducto> getAllComandaProducto(){
-        return comandaProductoService.getAllComandaProducto();
+    public ResponseEntity<List<ComandaProductoDTO>> getAllComandaProducto() {
+        List<ComandaProductoDTO> productos = comandaProductoService.getAllComandaProducto();
+        return ResponseEntity.ok(productos);
     }
 
     @GetMapping("/{id}")
-    public Comandaproducto getComandaProductoById(@PathVariable Long id) throws RecordNotFoundException {
-        return comandaProductoService.getComandaProductoById(id);
+    public ResponseEntity<ComandaProductoDTO> getComandaProductoById(@PathVariable Long id) throws RecordNotFoundException {
+        ComandaProductoDTO dto = comandaProductoService.getComandaProductoById(id);
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/comanda/{idComanda}")
-    public List<Comandaproducto> getComandaProductoByComanda(@PathVariable Long idComanda) {
-        return comandaProductoService.getComandaProductoByComandaId(idComanda);
+    public ResponseEntity<List<ComandaProductoDTO>> getComandaProductoByComanda(@PathVariable Long idComanda) {
+        List<ComandaProductoDTO> productos = comandaProductoService.getComandaProductoByComandaId(idComanda);
+        return ResponseEntity.ok(productos);
     }
 
     @PostMapping
-    public Comandaproducto createComandaProducto(@RequestBody Comandaproducto comandaproducto){
-        return comandaProductoService.createComandaProducto(comandaproducto);
+    public ResponseEntity<ComandaProductoDTO> createComandaProducto(@RequestBody ComandaProductoDTO dto) {
+        ComandaProductoDTO creado = comandaProductoService.createComandaProducto(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
     @PutMapping("/{id}")
-    public Comandaproducto updateComandaProducto(@PathVariable Long id,  @RequestBody Comandaproducto comandaproducto)  throws RecordNotFoundException {
-        return comandaProductoService.updateComandaProducto(id, comandaproducto);
+    public ResponseEntity<ComandaProductoDTO> updateComandaProducto(@PathVariable Long id, @RequestBody ComandaProductoDTO dto) throws RecordNotFoundException {
+        ComandaProductoDTO actualizado = comandaProductoService.updateComandaProducto(id, dto);
+        return ResponseEntity.ok(actualizado);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteComandaProducto(@PathVariable Long id) throws RecordNotFoundException {
+    public ResponseEntity<Void> deleteComandaProducto(@PathVariable Long id) throws RecordNotFoundException {
         comandaProductoService.deleteComandaProducto(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/comanda/{idComanda}/producto")
-    public ResponseEntity<Comandaproducto>  agregarProductoAComanda(@PathVariable Long idComanda, @RequestBody ComandaProductoDTO dto){
-        Comandaproducto nuevo = comandaProductoService.agregarProductoAComanda(idComanda, dto);
+    public ResponseEntity<ComandaProductoDTO> agregarProductoAComanda(@PathVariable Long idComanda, @RequestBody ComandaProductoDTO dto) {
+        ComandaProductoDTO nuevo = comandaProductoService.agregarProductoAComanda(idComanda, dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
-    }
-
-    @GetMapping("/comanda/{idCamanda}/productos")
-    public List<Comandaproducto> getComandaProductoByCamanda(@PathVariable Long idCamanda){
-        return comandaProductoService.getComandaProductoByComandaId(idCamanda);
     }
 }
