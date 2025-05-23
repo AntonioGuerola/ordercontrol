@@ -6,8 +6,10 @@ import com.antonio.ordercontrol.models.RegistrosVenta;
 import com.antonio.ordercontrol.models.TipoPeriodo;
 import com.antonio.ordercontrol.services.RegistrosVentaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -34,11 +36,6 @@ public class RegistrosVentaController {
         return registrosVentaService.findById(id);
     }
 
-    @GetMapping("/fecha/{fecha}")
-    public RegistrosVentasDTO findByFecha(@PathVariable Date fecha){
-        return registrosVentaService.findByFecha(fecha);
-    }
-
     @PostMapping
     public RegistrosVentasDTO createRegistrosVenta(@RequestBody RegistrosVentasDTO registrosVenta){
         return registrosVentaService.createRegistroVenta(registrosVenta);
@@ -52,5 +49,23 @@ public class RegistrosVentaController {
     @DeleteMapping("/{id}")
     public void deleteRegistrosVentas(@PathVariable Long id) throws RecordNotFoundException {
         registrosVentaService.deleteRegistroVenta(id);
+    }
+
+    @GetMapping("/fecha-inicio/{fechaInicio}")
+    public RegistrosVentasDTO findByFechaInicio(
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio) {
+        return registrosVentaService.findByFechaInicio(fechaInicio);
+    }
+
+    @GetMapping("/fecha-fin/{fechaFin}")
+    public RegistrosVentasDTO findByFechaFin(
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
+        return registrosVentaService.findByFechaFin(fechaFin);
+    }
+
+    @GetMapping("/fecha-en-rango/{fecha}")
+    public RegistrosVentasDTO findByFechaDentroDelRango(
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
+        return registrosVentaService.findByFechaDentroDelRango(fecha);
     }
 }

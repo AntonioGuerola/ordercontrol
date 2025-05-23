@@ -48,7 +48,7 @@ public class CuentaService {
     public CuentaDTO generarCuentaParaMesa(Long idMesa) {
         Mesa mesa = mesaRepository.findById(idMesa).orElseThrow(() -> new RuntimeException("Mesa no encontrada."));
 
-        List<Comanda> comandas = comandaRepository.findByIdMesaYEstado(mesa, EstadoComanda.CERRADA);
+        List<Comanda> comandas = comandaRepository.findByIdMesaAndEstado(mesa, EstadoComanda.CERRADA);
 
         BigDecimal sumaTotal = comandas.stream().flatMap(comanda -> comanda.getComandaproductos().stream())
                 .map(comandaproducto -> comandaproducto.getPrecioUnitario()
@@ -87,6 +87,6 @@ public class CuentaService {
     }
 
     public List<CuentaDTO> getCuentasByIdMesa(Long idMesa) {
-        return cuentaRepository.findByIdMesa(idMesa).stream().map(cuentaMapper::toCuentaDTO).collect(Collectors.toList());
+        return cuentaRepository.findByIdMesa_Id(idMesa).stream().map(cuentaMapper::toCuentaDTO).collect(Collectors.toList());
     }
 }

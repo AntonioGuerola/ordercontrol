@@ -68,25 +68,25 @@ public class ComandaService {
     }
 
     public List<ComandaDTO> getComandasByEstado(EstadoComanda estado){
-        return comandaRepository.findByEstadoIgnoreCase(estado).stream()
+        return comandaRepository.findByEstado(estado).stream()
                 .map(ComandaMapper::toComandaDTO)
                 .collect(Collectors.toList());
     }
 
     public List<ComandaDTO> getComandasByMesa(Long idMesa){
-        return comandaRepository.findByIdMesa(idMesa).stream()
+        return comandaRepository.findByIdMesa_Id(idMesa).stream()
                 .map(ComandaMapper::toComandaDTO)
                 .collect(Collectors.toList());
     }
 
     public List<ComandaDTO> getComandasByUsuario(Long idUsuario){
-        return comandaRepository.findByIdUsuario(idUsuario).stream()
+        return comandaRepository.findByIdUsuario_Id(idUsuario).stream()
                 .map(ComandaMapper::toComandaDTO)
                 .collect(Collectors.toList());
     }
 
     public Optional<ComandaDTO> getComandaActivaByMesa(Long idMesa){
-        return comandaRepository.findByIdMesaYEstado(idMesa, EstadoComanda.ABIERTA)
+        return comandaRepository.findByIdMesa_IdAndEstado(idMesa, EstadoComanda.ABIERTA)
                 .map(ComandaMapper::toComandaDTO);
     }
 
