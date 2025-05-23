@@ -9,6 +9,7 @@ import com.antonio.ordercontrol.repositories.RegistrosVentaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -32,11 +33,6 @@ public class RegistrosVentaService {
         return registrosVentasMapper.toRegistrosVentasDTO(registrosVenta);
     }
 
-    public RegistrosVentasDTO findByFecha(Date fecha) {
-        RegistrosVenta registrosVenta = registrosVentaRepository.findByFecha(fecha);
-        return registrosVenta != null ? registrosVentasMapper.toRegistrosVentasDTO(registrosVenta) : null;
-    }
-
     public RegistrosVentasDTO createRegistroVenta(RegistrosVentasDTO registrosVentasDTO) {
         RegistrosVenta registrosVenta = registrosVentasMapper.toRegistrosVenta(registrosVentasDTO);
         return registrosVentasMapper.toRegistrosVentasDTO(registrosVentaRepository.save(registrosVenta));
@@ -55,5 +51,23 @@ public class RegistrosVentaService {
     public void deleteRegistroVenta(Long id) throws RecordNotFoundException{
         RegistrosVenta registrosVenta = registrosVentaRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("No hay Registro de Venta para el id: ", id));
         registrosVentaRepository.delete(registrosVenta);
+    }
+
+    public RegistrosVentasDTO findByFechaInicio(LocalDate fechaInicio) {
+        return registrosVentaRepository.findByFechaInicio(fechaInicio)
+                .map(registrosVentasMapper::toRegistrosVentasDTO)
+                .orElseThrow(() -> new RecordNotFoundException("No se encontró ningún registro con fechaInicio: ", fechaInicio));
+    }
+
+    public RegistrosVentasDTO findByFechaFin(LocalDate fechaFin) {
+        return registrosVentaRepository.findByFechaFin(fechaFin)
+                .map(registrosVentasMapper::toRegistrosVentasDTO)
+                .orElseThrow(() -> new RecordNotFoundException("No se encontró ningún registro con fechaFin: ", fechaFin));
+    }
+
+    public RegistrosVentasDTO findByFechaDentroDelRango(LocalDate fecha) {
+        return registrosVentaRepository.findByFechaDentroDelRango(fecha)
+                .map(registrosVentasMapper::toRegistrosVentasDTO)
+                .orElseThrow(() -> new RecordNotFoundException("No se encontró ningún registro dentro del rango que incluya la fecha: ", fecha));
     }
 }

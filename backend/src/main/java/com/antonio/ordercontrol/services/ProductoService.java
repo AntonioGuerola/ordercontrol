@@ -107,7 +107,7 @@ public class ProductoService {
     }
 
     public List<Producto> getProductoPorIdCategoria(Long idCategoria){
-        return productoRepository.findByIdCategoriaIgnoreCase(idCategoria);
+        return productoRepository.findByCategoria_Id(idCategoria);
     }
 
     private void validarProductoDTO(ProductoDTO productoDTO){

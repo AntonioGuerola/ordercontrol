@@ -36,7 +36,7 @@ public class TipoMesaController {
         return ResponseEntity.ok(tipoMesaService.updateMesa(id, tipoMesaDTO));
     }
 
-    @PutMapping("/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteTipoMesa(@PathVariable Long id) throws RecordNotFoundException {
         tipoMesaService.deleteTipoMesa(id);
         return ResponseEntity.ok("Tipo de mesa eliminado con éxito.");
