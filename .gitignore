@@ -1,4 +1,6 @@
-# Ignore archivos de Java / Maven (backend)
+# ========================
+# IGNORAR BACKEND (Java/Maven)
+# ========================
 backend/target/
 backend/.idea/
 backend/*.iml
@@ -8,17 +10,25 @@ backend/logs/
 *.jar
 .mvn/
 
-# Ignore sistema operativo
+# ========================
+# IGNORAR FRONTEND (Angular/Node)
+# ========================
+frontend/node_modules/
+frontend/dist/
+**/dist/
+**/.angular/
+**/.angular/cache/
+**/.env
+
+# ========================
+# IGNORAR SISTEMA
+# ========================
 .DS_Store
 Thumbs.db
 ehthumbs.db
 desktop.ini
 
-# Ignora configuración de entorno
+# ========================
+# OTRAS CONFIGS
+# ========================
 *.env
-
-# Ignorar node_modules si luego usas npm en frontend
-frontend/node_modules/
-
-# Ignorar carpetas específicas si se usan
-**/dist/
