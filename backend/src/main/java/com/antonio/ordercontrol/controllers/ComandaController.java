@@ -1,10 +1,14 @@
 package com.antonio.ordercontrol.controllers;
 
+import com.antonio.ordercontrol.dtos.ComandaCreatedDTO;
+import com.antonio.ordercontrol.dtos.ComandaDTO;
 import com.antonio.ordercontrol.exceptions.RecordNotFoundException;
 import com.antonio.ordercontrol.models.Comanda;
 import com.antonio.ordercontrol.models.EstadoComanda;
+import com.antonio.ordercontrol.models.Mesa;
 import com.antonio.ordercontrol.services.ComandaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,41 +17,68 @@ import java.util.List;
 @RequestMapping("/api/comandas")
 @CrossOrigin(origins = "*")
 public class ComandaController {
+
     @Autowired
     private ComandaService comandaService;
 
     @GetMapping
-    public Comanda createComanda(@RequestBody Comanda comanda){
-        return comandaService.createComanda(comanda);
+    public ResponseEntity<List<ComandaDTO>> getAllComandas(){
+        List<ComandaDTO> comandas = comandaService.getAllComandas();
+        return ResponseEntity.ok(comandas);
+    }
+
+    @PostMapping
+    public ResponseEntity<ComandaDTO> createComanda(@RequestBody ComandaCreatedDTO comanda){
+        ComandaDTO comandaDTO = comandaService.createComanda(comanda);
+        return ResponseEntity.ok(comandaDTO);
     }
 
     @GetMapping("/{id}")
-    public Comanda getComandaById(@PathVariable Long id) throws RecordNotFoundException {
-        return comandaService.getComandaById(id);
+    public ResponseEntity<ComandaDTO> getComandaById(@PathVariable Long id) throws RecordNotFoundException {
+        ComandaDTO comandaDTO = comandaService.getComandaById(id);
+        return ResponseEntity.ok(comandaDTO);
     }
 
     @PutMapping("/{id}")
-    public Comanda updateComanda(@PathVariable Long id, @RequestBody Comanda comanda) throws RecordNotFoundException {
-        return comandaService.updateComanda(id, comanda);
+    public ResponseEntity<ComandaDTO> updateComanda(@PathVariable Long id, @RequestBody Comanda comanda) throws RecordNotFoundException {
+        ComandaDTO updated = comandaService.updateComanda(id, comanda);
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteComanda(@PathVariable Long id) throws RecordNotFoundException {
+    public ResponseEntity<Void> deleteComanda(@PathVariable Long id) throws RecordNotFoundException {
         comandaService.deleteComanda(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/estado/{estado}")
-    public List<Comanda> getComandaByEstado(@PathVariable EstadoComanda estado){
-        return comandaService.getComandasByEstado(estado);
+    public ResponseEntity<List<ComandaDTO>> getComandaByEstado(@PathVariable EstadoComanda estado){
+        List<ComandaDTO> comandas = comandaService.getComandasByEstado(estado);
+        return ResponseEntity.ok(comandas);
     }
 
     @GetMapping("/mesa/{idMesa}")
-    public List<Comanda> getComandaByMesa(@PathVariable Long idMesa){
-        return comandaService.getComandasByMesa(idMesa);
+    public ResponseEntity<List<ComandaDTO>> getComandaByMesa(@PathVariable Long idMesa){
+        List<ComandaDTO> comandas = comandaService.getComandasByMesa(idMesa);
+        return ResponseEntity.ok(comandas);
     }
 
     @GetMapping("/usuario/{idUsuario}")
-    public List<Comanda> getComandaByUsuario(@PathVariable Long idUsuario){
-        return comandaService.getComandasByUsuario(idUsuario);
+    public ResponseEntity<List<ComandaDTO>> getComandaByUsuario(@PathVariable Long idUsuario){
+        List<ComandaDTO> comandas = comandaService.getComandasByUsuario(idUsuario);
+        return ResponseEntity.ok(comandas);
+    }
+
+    @GetMapping("/mesa/{idMesa}/activa")
+    public ResponseEntity<ComandaDTO> getComandaActiva(@PathVariable Long idMesa){
+        return comandaService.getComandaActivaByMesa(idMesa)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/{id}/cerrar")
+    public ResponseEntity<Void> cerrarComanda(@PathVariable Long id){
+        comandaService.cerrarComanda(id);
+        return ResponseEntity.ok().build();
     }
 }

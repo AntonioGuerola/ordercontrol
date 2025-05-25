@@ -20,8 +20,15 @@ public class TipoMesa {
     @Column(name = "nombre", nullable = false, length = 50)
     private String nombre;
 
-    @OneToMany(mappedBy = "tipoMesa")
+    @OneToMany(mappedBy = "tipo")
     private List<Mesa> mesas = new ArrayList<>();
+
+    public TipoMesa(Long id, String nombre) {
+    }
+
+    public TipoMesa() {
+
+    }
 
     public Integer getId() {
         return id;

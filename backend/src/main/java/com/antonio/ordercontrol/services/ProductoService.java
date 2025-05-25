@@ -1,6 +1,9 @@
 package com.antonio.ordercontrol.services;
 
+import com.antonio.ordercontrol.dtos.ProductoDTO;
 import com.antonio.ordercontrol.exceptions.RecordNotFoundException;
+import com.antonio.ordercontrol.mappers.ProductoMapper;
+import com.antonio.ordercontrol.models.Categoria;
 import com.antonio.ordercontrol.models.Producto;
 import com.antonio.ordercontrol.repositories.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,35 +16,38 @@ import java.util.Optional;
 
 @Service
 public class ProductoService {
+
     @Autowired
     private ProductoRepository productoRepository;
+    @Autowired
+    private CategoriaService categoriaService;
 
-    public Producto createProducto(Producto producto) {
-        validarProducto(producto);
+    public ProductoDTO createProducto(ProductoDTO productoDTO) {
+        validarProductoDTO(productoDTO);
+
+        Categoria categoria = categoriaService.getCategoriaById(productoDTO.getIdCategoria());
+        Producto producto = ProductoMapper.toProducto(productoDTO, categoria);
         producto = productoRepository.save(producto);
-        return producto;
+        return ProductoMapper.toProductoDTO(producto);
     }
 
-    public Producto updateProducto(Long id, Producto producto) throws RecordNotFoundException {
-        if (producto.getId() != null) {
-            Optional<Producto> productoOptional = productoRepository.findById(id);
-            if (productoOptional.isPresent()) {
-                Producto newProducto = productoOptional.get();
-                newProducto.setNombre(producto.getNombre());
-                newProducto.setDescripcion(producto.getDescripcion());
-                newProducto.setPrecio(producto.getPrecio());
-                newProducto.setTipo(producto.getTipo());
-                newProducto.setDisponible(producto.getDisponible());
-                newProducto.setCategoria(producto.getCategoria());
+    public ProductoDTO updateProducto(Long id, ProductoDTO productoDTO) throws RecordNotFoundException {
+        Optional<Producto> productoOptional = productoRepository.findById(id);
 
-                validarProducto(newProducto);
-                newProducto = productoRepository.save(newProducto);
-                return newProducto;
-            } else {
-                throw new RecordNotFoundException("No existe Producto para el id: ", producto.getId());
-            }
+        if (productoOptional.isPresent()) {
+            Producto productoExistente = productoOptional.get();
+
+            Categoria categoria = categoriaService.getCategoriaById(productoDTO.getIdCategoria());
+
+            ProductoMapper.actualizarProducto(productoDTO, productoExistente, categoria);
+
+            validarProducto(productoExistente);
+
+            Producto productoActualizado = productoRepository.save(productoExistente);
+
+            return ProductoMapper.toProductoDTO(productoActualizado);
         } else {
-            throw new RecordNotFoundException("No hay id en el Producto a actualizar ", 0l);
+            throw new RecordNotFoundException("No existe Producto para el id: ", id);
         }
     }
 
@@ -99,5 +105,26 @@ public class ProductoService {
             throw new IllegalArgumentException("El tipo del producto no puede estar vacío.");
         }
     }
-}
 
+    public List<Producto> getProductoPorIdCategoria(Long idCategoria){
+        return productoRepository.findByCategoria_Id(idCategoria);
+    }
+
+    private void validarProductoDTO(ProductoDTO productoDTO){
+        if (productoDTO.getNombre() == null || productoDTO.getNombre().isBlank()){
+            throw new IllegalArgumentException("El nombre del producto no puede estar vacío.");
+        }
+
+        if (productoDTO.getPrecio() == null || productoDTO.getPrecio().compareTo(BigDecimal.ZERO) <= 0){
+            throw new IllegalArgumentException("El precio del producto debe ser mayor que 0.");
+        }
+
+        if (productoDTO.getTipo() == null || productoDTO.getTipo().isBlank()){
+            throw new IllegalArgumentException("El tipo del producto no puede estar vacío.");
+        }
+
+        if (productoDTO.getIdCategoria() == null){
+            throw new IllegalArgumentException("Debe especificar una categoría válida.");
+        }
+    }
+}

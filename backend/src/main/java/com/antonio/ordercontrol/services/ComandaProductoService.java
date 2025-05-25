@@ -1,58 +1,76 @@
 package com.antonio.ordercontrol.services;
 
+import com.antonio.ordercontrol.dtos.ComandaProductoDTO;
 import com.antonio.ordercontrol.exceptions.RecordNotFoundException;
+import com.antonio.ordercontrol.mappers.ComandaProductoMapper;
+import com.antonio.ordercontrol.models.Comanda;
 import com.antonio.ordercontrol.models.Comandaproducto;
+import com.antonio.ordercontrol.models.Producto;
 import com.antonio.ordercontrol.repositories.ComandaProductoRepository;
 import com.antonio.ordercontrol.repositories.ComandaRepository;
+import com.antonio.ordercontrol.repositories.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ComandaProductoService {
+
     @Autowired
     private ComandaRepository comandaRepository;
+
     @Autowired
     private ComandaProductoRepository comandaProductoRepository;
 
-    public Comandaproducto createComandaProducto(Comandaproducto comandaProducto){
-        return comandaProductoRepository.save(comandaProducto);
+    @Autowired
+    private ProductoRepository productoRepository;
+
+    private ComandaProductoMapper comandaProductoMapper;
+
+    public ComandaProductoDTO createComandaProducto(ComandaProductoDTO comandaProductoDTO){
+        Comandaproducto comandaproducto = comandaProductoMapper.toEntity(comandaProductoDTO);
+        return comandaProductoMapper.toComandaProductoDTO(comandaProductoRepository.save(comandaproducto));
     }
 
-    public Comandaproducto updateComandaProducto(Long id, Comandaproducto comandaProducto) throws RecordNotFoundException {
-        Optional<Comandaproducto> comandaProductoExistente = comandaProductoRepository.findById(id);
-        if (comandaProductoExistente.isPresent()) {
-            Comandaproducto comandaProductoUpdate = comandaProductoExistente.get();
-            comandaProductoUpdate.setCantidad(comandaProducto.getCantidad());
-            comandaProductoUpdate.setComanda(comandaProducto.getComanda());
-            comandaProductoUpdate.setProducto(comandaProductoUpdate.getProducto());
-            comandaProductoUpdate.setPrecioUnitario(comandaProductoUpdate.getPrecioUnitario());
-            return comandaProductoRepository.save(comandaProductoUpdate);
-        } else {
-            throw new RecordNotFoundException("No existe ComandaProducto con eee id: ", id);
+    public ComandaProductoDTO updateComandaProducto(Long id, ComandaProductoDTO comandaProductoDTO) throws RecordNotFoundException {
+        Comandaproducto comandaProductoExistente = comandaProductoRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("No hay ComandaProducto para el id: ", id));
+        comandaProductoExistente.setCantidad(comandaProductoDTO.getCantidad());
+        comandaProductoExistente.setPrecioUnitario(comandaProductoDTO.getPrecioUnitario());
+
+        if (!comandaProductoExistente.getProducto().getId().equals(comandaProductoDTO.getIdProducto())) {
+            comandaProductoExistente.setProducto(comandaProductoMapper.toEntity(comandaProductoDTO).getProducto());
         }
+
+        return comandaProductoMapper.toComandaProductoDTO(comandaProductoRepository.save(comandaProductoExistente));
     }
 
     public void deleteComandaProducto(Long id) throws RecordNotFoundException {
-        Optional<Comandaproducto> comandaProductoExistente = comandaProductoRepository.findById(id);
-        if (comandaProductoExistente.isPresent()) {
-            comandaProductoRepository.delete(comandaProductoExistente.get());
-        } else {
-            throw new RecordNotFoundException("No existe ComandaProducto con id: ", id);
+        if (!comandaProductoRepository.existsById(id)) {
+            throw new RecordNotFoundException("No hay ComandaProducto para el id: ", id);
         }
+        comandaProductoRepository.deleteById(id);
     }
 
-    public Comandaproducto getComandaProductoById(Long id) throws RecordNotFoundException{
-        return comandaProductoRepository.findById(id).orElseThrow(() ->  new RecordNotFoundException("No existe ComandaProducto con id: ", id));
+    public ComandaProductoDTO getComandaProductoById(Long id) throws RecordNotFoundException{
+        return comandaProductoMapper.toComandaProductoDTO(comandaProductoRepository.findById(id).orElseThrow(() ->  new RecordNotFoundException("No existe ComandaProducto con id: ", id)));
     }
 
-    public List<Comandaproducto> getAllComandaProducto(){
-        return comandaProductoRepository.findAll();
+    public List<ComandaProductoDTO> getAllComandaProducto(){
+        return comandaProductoRepository.findAll().stream().map(comandaProductoMapper::toComandaProductoDTO).collect(Collectors.toList());
     }
 
-    public List<Comandaproducto> getComandaProductoByComandaId(Long id){
-        return comandaProductoRepository.findByComandaId(id);
+    public List<ComandaProductoDTO> getComandaProductoByComandaId(Long id){
+        return comandaProductoRepository.findByComandaId(id).stream().map(comandaProductoMapper::toComandaProductoDTO).collect(Collectors.toList());
+    }
+
+    public ComandaProductoDTO agregarProductoAComanda(Long idComanda, ComandaProductoDTO comandaProductoDTO){
+        comandaProductoDTO.setIdComanda(idComanda);
+        Comandaproducto comandaproducto = comandaProductoMapper.toEntity(comandaProductoDTO);
+        Comandaproducto comandaProductoExistente = comandaProductoRepository.save(comandaproducto);
+
+        return comandaProductoMapper.toComandaProductoDTO(comandaProductoRepository.save(comandaproducto));
     }
 }
