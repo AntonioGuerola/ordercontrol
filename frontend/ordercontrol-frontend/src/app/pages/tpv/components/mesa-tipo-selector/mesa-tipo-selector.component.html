@@ -1,0 +1,14 @@
+<!-- mesa-tipo-selector.component.html -->
+<div class="flex items-center gap-2 overflow-x-auto">
+  <button
+    *ngFor="let tipo of tiposMesa"
+    (click)="seleccionarTipo(tipo.id)"
+    [ngClass]="{
+      'bg-blue-600 text-white': tipo.id === tipoSeleccionadoId,
+      'bg-white border border-gray-300': tipo.id !== tipoSeleccionadoId
+    }"
+    class="px-4 py-2 rounded-md whitespace-nowrap"
+  >
+    {{ tipo.nombre }}
+  </button>
+</div>
