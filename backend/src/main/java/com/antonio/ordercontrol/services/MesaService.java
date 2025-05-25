@@ -63,8 +63,14 @@ public class MesaService {
         return mesaRepository.findByEstadoIgnoreCase(estado).stream().map(MesaMapper::toMesaDTO).collect(Collectors.toList());
     }
 
-    public List<MesaDTO> getMesasPorTipo(String tipo){
-        return mesaRepository.findByTipoIgnoreCase(tipo).stream().map(MesaMapper::toMesaDTO).collect(Collectors.toList());
+    public List<MesaDTO> getMesasPorTipo(String tipoNombre){
+        TipoMesa tipoMesa = tipoMesaRepository.findByNombreIgnoreCase(tipoNombre)
+                .orElseThrow(() -> new RuntimeException("Tipo de mesa no encontrado: " + tipoNombre));
+
+        return mesaRepository.findByTipo(tipoMesa)
+                .stream()
+                .map(MesaMapper::toMesaDTO)
+                .collect(Collectors.toList());
     }
 
     public List<MesaDTO> getMesasPorNumero(int numero){
