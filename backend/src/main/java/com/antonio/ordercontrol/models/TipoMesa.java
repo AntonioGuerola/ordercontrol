@@ -26,6 +26,10 @@ public class TipoMesa {
     public TipoMesa(Long id, String nombre) {
     }
 
+    public TipoMesa() {
+
+    }
+
     public Integer getId() {
         return id;
     }
