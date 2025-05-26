@@ -1,5 +1,7 @@
-<!-- mesa-tipo-selector.component.html -->
 <div class="flex items-center gap-2 overflow-x-auto">
+  <p *ngIf="tiposMesa.length === 0">No hay tipos de mesa</p>
+  <p *ngIf="tiposMesa.length > 0">Hay {{ tiposMesa.length }} tipos de mesa</p>
+
   <button
     *ngFor="let tipo of tiposMesa"
     (click)="seleccionarTipo(tipo.id)"
