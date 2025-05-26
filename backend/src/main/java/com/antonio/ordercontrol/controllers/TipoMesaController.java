@@ -12,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/tipos-mesa")
+@CrossOrigin(origins = "*")
 public class TipoMesaController {
     @Autowired
     private TipoMesaService tipoMesaService;
