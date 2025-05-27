@@ -1,6 +1,7 @@
 package com.antonio.ordercontrol.controllers;
 
 import com.antonio.ordercontrol.exceptions.RecordNotFoundException;
+import com.antonio.ordercontrol.mappers.ProductoMapper;
 import com.antonio.ordercontrol.models.Producto;
 import com.antonio.ordercontrol.services.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,23 +21,24 @@ public class ProductoController {
     private ProductoService productoService;
 
     @GetMapping
-    public ResponseEntity<List<Producto>> getAllProductos(){
-        return ResponseEntity.ok(productoService.getAllProductos());
+    public ResponseEntity<List<ProductoDTO>> getAllProductos(){
+        return ResponseEntity.ok(productoService.getAllProductos().stream().map(ProductoMapper::toProductoDTO).toList());
     }
 
     @GetMapping("/disponibles")
-    public ResponseEntity<List<Producto>> getProductosDisponibles(){
-        return ResponseEntity.ok(productoService.getProductosDisponibles());
+    public ResponseEntity<List<ProductoDTO>> getProductosDisponibles(){
+        return ResponseEntity.ok(productoService.getProductosDisponibles().stream().map(ProductoMapper::toProductoDTO).toList());
     }
 
     @GetMapping("/tipo/{tipo}")
-    public ResponseEntity<List<Producto>> getProductosPorTipo(@PathVariable String tipo){
-        return ResponseEntity.ok(productoService.getProductosPorTipo(tipo));
+    public ResponseEntity<List<ProductoDTO>> getProductosPorTipo(@PathVariable String tipo){
+        return ResponseEntity.ok(productoService.getProductosPorTipo(tipo).stream().map(ProductoMapper::toProductoDTO).toList());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Producto> getProductoById(@PathVariable Long id){
-        return ResponseEntity.ok(productoService.getProductoById(id));
+    public ResponseEntity<ProductoDTO> getProductoById(@PathVariable Long id){
+        Producto producto = productoService.getProductoById(id);
+        return ResponseEntity.ok(ProductoMapper.toProductoDTO(producto));
     }
 
     @PostMapping
@@ -57,13 +59,14 @@ public class ProductoController {
     }
 
     @PatchMapping("/{id}/disponible")
-    public ResponseEntity<Producto> cambiarDisponibilidad(@PathVariable Long id, @RequestBody Map<String, Boolean> cuerpo) throws RecordNotFoundException{
+    public ResponseEntity<ProductoDTO> cambiarDisponibilidad(@PathVariable Long id, @RequestBody Map<String, Boolean> cuerpo) throws RecordNotFoundException{
         Boolean estado = cuerpo.get("disponible");
-        return ResponseEntity.ok(productoService.cambiarDisponibilidad(id, estado));
+        Producto producto = productoService.cambiarDisponibilidad(id, estado);
+        return ResponseEntity.ok(ProductoMapper.toProductoDTO(producto));
     }
 
     @GetMapping("/categoria/{id}")
-    public List<Producto> getProductosPorCategoria(@PathVariable Long id){
-        return productoService.getProductoPorIdCategoria(id);
+    public ResponseEntity<List<ProductoDTO>> getProductosPorCategoria(@PathVariable Long id){
+        return ResponseEntity.ok(productoService.getProductoPorIdCategoria(id).stream().map(ProductoMapper::toProductoDTO).toList());
     }
 }

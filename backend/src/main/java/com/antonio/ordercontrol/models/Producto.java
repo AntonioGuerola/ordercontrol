@@ -1,5 +1,7 @@
 package com.antonio.ordercontrol.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.ColumnDefault;
@@ -35,9 +37,11 @@ public class Producto {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_categoria")
+    @JsonIgnore
     private Categoria categoria;
 
     @OneToMany(mappedBy = "producto")
+    @JsonIgnore
     private List<Comandaproducto> comandaproductos = new ArrayList<>();
 
     public Integer getId() {
