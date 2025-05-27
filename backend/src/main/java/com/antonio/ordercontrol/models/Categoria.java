@@ -1,5 +1,6 @@
 package com.antonio.ordercontrol.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 
@@ -19,6 +20,7 @@ public class Categoria {
     private String nombre;
 
     @OneToMany(mappedBy = "categoria")
+    @JsonIgnore
     private List<Producto> productos = new ArrayList<>();
 
     public Integer getId() {
