@@ -26,6 +26,7 @@ export class MesaTipoSelectorComponent implements OnInit {
 
   seleccionarTipo(id: number) {
     this.tipoSeleccionadoId = id;
+    console.log('Tipo de mesa seleccionado: ${id}');
     // Aquí puedes emitir un evento o llamar a un método para cargar las mesas
   }
 }
