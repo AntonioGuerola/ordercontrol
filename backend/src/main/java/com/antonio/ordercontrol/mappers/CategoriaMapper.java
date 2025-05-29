@@ -13,7 +13,9 @@ public class CategoriaMapper {
 
     public static Categoria toCategoria(CategoriaDTO categoriaDTO) {
         Categoria categoria = new Categoria();
-        categoria.setId(categoriaDTO.getId().intValue());
+        if (categoriaDTO.getId() != null) {
+            categoria.setId(categoriaDTO.getId().intValue());
+        }
         categoria.setNombre(categoriaDTO.getNombre());
         return categoria;
     }

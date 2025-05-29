@@ -1,1 +1,12 @@
-<p>categoria-selector works!</p>
+<div class="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
+  <button
+    *ngFor="let categoria of categorias"
+    (click)="seleccionarCategoria(categoria)"
+    [ngClass]="categoriaSeleccionadaId === categoria.id
+      ? 'bg-blue-600 text-white'
+      : 'bg-white border border-gray-300 text-gray-800'"
+    class="whitespace-nowrap min-w-fit px-4 py-2 text-sm font-medium flex items-center gap-2 rounded-md hover:bg-gray-100 transition"
+  >
+    {{ categoria.nombre }}
+  </button>
+</div>
