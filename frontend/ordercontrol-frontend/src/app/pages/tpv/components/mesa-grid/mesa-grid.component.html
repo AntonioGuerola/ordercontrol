@@ -1,1 +1,19 @@
-<p>mesa-grid works!</p>
+<div class="grid grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3">
+  <button
+    *ngFor="let mesa of mesas"
+    (click)="seleccionarMesa(mesa.numMesa)"
+    [ngClass]="[
+      'h-20 p-3 flex flex-col items-center justify-center gap-1 border-2 transition-all',
+      getEstadoColor(mesa.estado),
+      mesaSeleccionada === mesa.numMesa ? 'ring-2 ring-blue-500 ring-offset-2' : ''
+    ]"
+  >
+    <div class="font-bold text-lg">Mesa {{ mesa.numMesa }}</div>
+    <div class="flex items-center gap-2 text-xs">
+      <div *ngIf="mesa.fechaHora" class="flex items-center gap-1">
+        <span class="material-icons text-sm">access_time</span>
+        <span>{{ mesa.fechaHora | date:'shortTime' }}</span>
+      </div>
+    </div>
+  </button>
+</div>

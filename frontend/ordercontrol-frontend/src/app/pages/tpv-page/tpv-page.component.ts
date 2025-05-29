@@ -16,5 +16,10 @@ import { CuentaComponent } from '../tpv/components/cuenta/cuenta.component';
   styleUrl: './tpv-page.component.css'
 })
 export class TpvPageComponent {
+  tipoMesaSeleccionada: string = 'Cafeteria';
 
+  actualizarTipoMesaSeleccionado(tipo: string) {
+    this.tipoMesaSeleccionada = tipo;
+  }
 }
+

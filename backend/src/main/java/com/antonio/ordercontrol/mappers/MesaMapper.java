@@ -16,10 +16,15 @@ public class MesaMapper {
 
     public static Mesa toMesa(MesaDTO mesaDTO) {
         Mesa mesa = new Mesa();
-        mesa.setId(mesaDTO.getId().intValue());
+
+        if (mesaDTO.getId() != null) {
+            mesa.setId(mesaDTO.getId().intValue());
+        }
+
         mesa.setNumMesa(mesaDTO.getNumMesa());
         mesa.setEstado(mesaDTO.getEstado());
         mesa.setFechaHora(mesaDTO.getFechaHora());
+
         return mesa;
     }
 }

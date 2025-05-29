@@ -24,9 +24,18 @@ public class MesaService {
     private TipoMesaRepository tipoMesaRepository;
 
     public MesaDTO createMesa(MesaDTO mesaDTO){
-        Mesa mesa = MesaMapper.toMesa(mesaDTO);
-        TipoMesa tipoMesa = tipoMesaRepository.findByNombreIgnoreCase(mesaDTO.getTipo()).orElseThrow(() -> new IllegalArgumentException("Tipo de mesa no encontrado"));
+        TipoMesa tipoMesa = tipoMesaRepository.findByNombreIgnoreCase(mesaDTO.getTipo())
+                .orElseThrow(() -> new IllegalArgumentException("Tipo de mesa no encontrado"));
+
+        int numMesasExistentes = mesaRepository.findByTipo(tipoMesa).size();
+        int nuevoNumeroMesa = numMesasExistentes + 1;
+
+        Mesa mesa = new Mesa();
         mesa.setTipo(tipoMesa);
+        mesa.setNumMesa(nuevoNumeroMesa);
+        mesa.setEstado("libre");
+        mesa.setFechaHora(mesaDTO.getFechaHora());
+
         return MesaMapper.toMesaDTO(mesaRepository.save(mesa));
     }
 
@@ -78,8 +87,16 @@ public class MesaService {
     }
 
     public MesaDTO cambiarEstado(Long id, String nuevoEstado) throws RecordNotFoundException{
-        Mesa mesa = mesaRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("No existe Mesa para el id: ", id));
+        validarEstado(nuevoEstado);
+        Mesa mesa = mesaRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("No existe Mesa para el id: ", id));
         mesa.setEstado(nuevoEstado);
         return MesaMapper.toMesaDTO(mesaRepository.save(mesa));
+    }
+
+    private void validarEstado(String estado) {
+        if (!estado.equalsIgnoreCase("libre") && !estado.equalsIgnoreCase("ocupada")) {
+            throw new IllegalArgumentException("Estado no válido. Solo se permite 'libre' u 'ocupada'");
+        }
     }
 }

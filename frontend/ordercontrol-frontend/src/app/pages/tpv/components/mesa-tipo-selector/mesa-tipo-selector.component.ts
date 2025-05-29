@@ -1,5 +1,5 @@
 // mesa-tipo-selector.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import { TipoMesaService } from '../../../../core/services/tipo-mesa.service';
 import { TipoMesa } from '../../../../core/services/tipo-mesa.service';
 import { CommonModule } from '@angular/common';
@@ -24,9 +24,10 @@ export class MesaTipoSelectorComponent implements OnInit {
     });
   }
 
+  @Output() tipoSeleccionado = new EventEmitter<string>();
   seleccionarTipo(id: number) {
+    const tipo = this.tiposMesa.find(t => t.id === id);
     this.tipoSeleccionadoId = id;
-    console.log('Tipo de mesa seleccionado: ${id}');
-    // Aquí puedes emitir un evento o llamar a un método para cargar las mesas
+    if (tipo) this.tipoSeleccionado.emit(tipo.nombre);
   }
 }
