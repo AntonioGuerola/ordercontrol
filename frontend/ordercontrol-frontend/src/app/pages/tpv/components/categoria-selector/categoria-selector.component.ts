@@ -13,7 +13,7 @@ export class CategoriaSelectorComponent implements OnInit {
   categorias: Categoria[] = [];
   categoriaSeleccionadaId: number | null = null;
 
-  @Output() categoriaSeleccionada = new EventEmitter<string>();
+  @Output() categoriaSeleccionada = new EventEmitter<number>();
 
   constructor(private categoriaService: CategoriaService) {}
 
@@ -23,7 +23,7 @@ export class CategoriaSelectorComponent implements OnInit {
         this.categorias = data;
         if (data.length > 0) {
           this.categoriaSeleccionadaId = data[0].id;
-          this.categoriaSeleccionada.emit(data[0].nombre);
+          this.categoriaSeleccionada.emit(data[0].id);
         }
       },
       error: (err) => console.error('Error al obtener categorías:', err)
@@ -32,6 +32,6 @@ export class CategoriaSelectorComponent implements OnInit {
 
   seleccionarCategoria(categoria: Categoria) {
     this.categoriaSeleccionadaId = categoria.id;
-    this.categoriaSeleccionada.emit(categoria.nombre);
+    this.categoriaSeleccionada.emit(categoria.id);
   }
 }

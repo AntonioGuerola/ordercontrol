@@ -24,15 +24,13 @@ public class ProductoMapper {
 
     public static Producto toProducto(ProductoDTO productoDTO, Categoria  categoria) {
         Producto producto = new Producto();
-        if (productoDTO.getId() != null) {
-            producto.setId(productoDTO.getId().intValue());
-            producto.setNombre(productoDTO.getNombre());
-            producto.setDescripcion(productoDTO.getDescripcion());
-            producto.setPrecio(productoDTO.getPrecio());
-            producto.setTipo(productoDTO.getTipo());
-            producto.setDisponible(productoDTO.getDisponible() != null ? productoDTO.getDisponible() : true);
-            producto.setCategoria(categoria);
-        }
+
+        producto.setNombre(productoDTO.getNombre());
+        producto.setDescripcion(productoDTO.getDescripcion());
+        producto.setPrecio(productoDTO.getPrecio());
+        producto.setTipo(productoDTO.getTipo());
+        producto.setDisponible(productoDTO.getDisponible() != null ? productoDTO.getDisponible() : true);
+        producto.setCategoria(categoria);
 
         return producto;
     }

@@ -1,4 +1,3 @@
-<!-- tpv-page.component.html -->
 <div class="h-screen bg-gray-50 flex flex-col overflow-hidden">
   <div class="bg-white border-b border-gray-200 p-4">
     <app-mesa-tipo-selector (tipoSeleccionado)="actualizarTipoMesaSeleccionado($event)"></app-mesa-tipo-selector>
@@ -20,10 +19,14 @@
 
       <div class="h-80 bg-gray-100 border-t border-gray-200 flex flex-col">
         <div class="p-4 pb-2">
-          <app-categoria-selector></app-categoria-selector>
+          <app-categoria-selector
+          (categoriaSeleccionada)="actualizarCategoriaSeleccionada($event)"
+          ></app-categoria-selector>
         </div>
         <div class="flex-1 overflow-auto px-4 pb-4">
-          <app-producto-grid></app-producto-grid>
+          <app-producto-grid
+          [idCategoriaSeleccionada]="idCategoriaSeleccionada"
+          ></app-producto-grid>
         </div>
       </div>
     </div>
