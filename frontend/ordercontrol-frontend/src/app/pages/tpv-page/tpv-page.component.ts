@@ -17,9 +17,14 @@ import { CuentaComponent } from '../tpv/components/cuenta/cuenta.component';
 })
 export class TpvPageComponent {
   tipoMesaSeleccionada: string = 'Cafeteria';
+  idCategoriaSeleccionada: number | null = null;
 
   actualizarTipoMesaSeleccionado(tipo: string) {
     this.tipoMesaSeleccionada = tipo;
+  }
+
+  actualizarCategoriaSeleccionada(idCategoria: number) {
+    this.idCategoriaSeleccionada = idCategoria;
   }
 }
 
