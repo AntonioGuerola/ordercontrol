@@ -13,6 +13,7 @@ import com.antonio.ordercontrol.repositories.MesaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
@@ -28,6 +29,9 @@ public class CuentaService {
 
     @Autowired
     private MesaRepository mesaRepository;
+
+    @Autowired
+    private RegistroCSVService registroCSVService;
 
     private CuentaMapper cuentaMapper;
 
@@ -51,22 +55,40 @@ public class CuentaService {
         List<Comanda> comandas = comandaRepository.findByIdMesaAndEstado(mesa, EstadoComanda.CERRADA);
 
         BigDecimal sumaTotal = comandas.stream().flatMap(comanda -> comanda.getComandaproductos().stream())
-                .map(comandaproducto -> comandaproducto.getPrecioUnitario()
-                        .multiply(BigDecimal.valueOf(comandaproducto.getCantidad()))).reduce(BigDecimal.ZERO, BigDecimal::add);
+                .map(cp -> cp.getPrecioUnitario().multiply(BigDecimal.valueOf(cp.getCantidad())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         Cuenta cuenta = new Cuenta();
         cuenta.setIdMesa(mesa);
         cuenta.setSumaTotal(sumaTotal);
         cuenta.setHoraCobro(Instant.now());
 
+        // Marcar comandas como cerradas
         for (Comanda comanda : comandas){
             comanda.setEstado(EstadoComanda.CERRADA.name());
         }
-
         comandaRepository.saveAll(comandas);
 
-        return cuentaMapper.toCuentaDTO(cuentaRepository.save(cuenta));
+        Cuenta cuentaGuardada = cuentaRepository.save(cuenta);
+
+        try {
+            // Generar CSV + registros
+            registroCSVService.procesarCuenta(cuentaGuardada);
+        } catch (IOException e) {
+            throw new RuntimeException("Error al generar CSV: " + e.getMessage(), e);
+        }
+
+        // Eliminar mesa y volverla a crear para mantenerla disponible con mismo num y tipo
+        Mesa nuevaMesa = new Mesa();
+        nuevaMesa.setNumMesa(mesa.getNumMesa());
+        nuevaMesa.setTipo(mesa.getTipo());
+
+        mesaRepository.delete(mesa);
+        mesaRepository.save(nuevaMesa);
+
+        return cuentaMapper.toCuentaDTO(cuentaGuardada);
     }
+
 
     public CuentaDTO updateCuenta(Long id, CuentaDTO nuevaCuenta) throws RecordNotFoundException {
         Cuenta cuenta =  cuentaRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("No hay Cuenta para el id: ", id));

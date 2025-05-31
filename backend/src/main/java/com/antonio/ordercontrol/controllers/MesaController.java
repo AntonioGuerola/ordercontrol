@@ -5,6 +5,7 @@ import com.antonio.ordercontrol.exceptions.RecordNotFoundException;
 import com.antonio.ordercontrol.models.Mesa;
 import com.antonio.ordercontrol.services.MesaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,5 +59,15 @@ public class MesaController {
         return ResponseEntity.ok(mesaService.cambiarEstado(id,nuevoEstado));
     }
 
-
+    @DeleteMapping("/anular/{idMesa}")
+    public ResponseEntity<String> anularMesa(@PathVariable Long idMesa) {
+        try {
+            mesaService.anularMesa(idMesa);
+            return ResponseEntity.ok("Mesa anulada con éxito y estado restablecido a LIBRE.");
+        } catch (RecordNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Mesa no encontrada.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al anular mesa: " + e.getMessage());
+        }
+    }
 }
