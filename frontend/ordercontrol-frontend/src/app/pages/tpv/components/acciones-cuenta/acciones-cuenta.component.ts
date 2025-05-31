@@ -5,7 +5,7 @@ import { Mesa } from '../../../../core/models/mesa';
 @Component({
   selector: 'app-acciones-cuenta',
   templateUrl: './acciones-cuenta.component.html',
-  styleUrls: ['./acciones-cuenta.component.scss']
+  styleUrls: ['./acciones-cuenta.component.css']
 })
 export class AccionesCuentaComponent {
   @Input() mesa!: Mesa;

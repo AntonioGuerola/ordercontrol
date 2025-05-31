@@ -1,5 +1,25 @@
-<div class="acciones-cuenta">
-  <button (click)="cobrarCuenta()">Cobrar</button>
-  <button (click)="imprimirCuenta()">Imprimir</button>
-  <button (click)="anularCuenta()">Anular</button>
+<div class="p-4 border-b border-gray-200 bg-gray-50">
+  <div class="flex flex-col gap-2">
+    <div class="grid grid-cols-2 gap-2">
+      <button
+        (click)="cobrarCuenta()"
+        class="bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded transition"
+      >
+        Cobrar
+      </button>
+      <button
+        (click)="imprimirCuenta()"
+        class="border border-gray-300 text-gray-800 font-medium px-4 py-2 rounded hover:bg-gray-100 transition"
+      >
+        Imprimir
+      </button>
+    </div>
+
+    <button
+      (click)="anularCuenta()"
+      class="border border-red-300 text-red-600 hover:text-red-700 font-medium px-4 py-2 rounded hover:bg-red-50 transition"
+    >
+      Anular
+    </button>
+  </div>
 </div>
