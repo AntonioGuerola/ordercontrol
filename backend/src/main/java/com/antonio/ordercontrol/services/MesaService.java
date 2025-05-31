@@ -3,10 +3,11 @@ package com.antonio.ordercontrol.services;
 import com.antonio.ordercontrol.dtos.MesaDTO;
 import com.antonio.ordercontrol.exceptions.RecordNotFoundException;
 import com.antonio.ordercontrol.mappers.MesaMapper;
+import com.antonio.ordercontrol.models.Comanda;
+import com.antonio.ordercontrol.models.Cuenta;
 import com.antonio.ordercontrol.models.Mesa;
 import com.antonio.ordercontrol.models.TipoMesa;
-import com.antonio.ordercontrol.repositories.MesaRepository;
-import com.antonio.ordercontrol.repositories.TipoMesaRepository;
+import com.antonio.ordercontrol.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,15 @@ public class MesaService {
 
     @Autowired
     private TipoMesaRepository tipoMesaRepository;
+
+    @Autowired
+    private CuentaRepository cuentaRepository;
+
+    @Autowired
+    private ComandaRepository comandaRepository;
+
+    @Autowired
+    private ComandaProductoRepository ComandaProductoRepository;
 
     public MesaDTO createMesa(MesaDTO mesaDTO){
         TipoMesa tipoMesa = tipoMesaRepository.findByNombreIgnoreCase(mesaDTO.getTipo())
@@ -99,4 +109,23 @@ public class MesaService {
             throw new IllegalArgumentException("Estado no válido. Solo se permite 'libre' u 'ocupada'");
         }
     }
+
+    public void anularMesa(Long idMesa) throws RecordNotFoundException {
+        Mesa mesa = mesaRepository.findById(idMesa)
+                .orElseThrow(() -> new RecordNotFoundException("No existe mesa para anular con id: ", idMesa));
+
+        List<Cuenta> cuentas = cuentaRepository.findByIdMesa_Id(idMesa);
+        cuentaRepository.deleteAll(cuentas);
+
+        List<Comanda> comandas = comandaRepository.findByIdMesa_Id(Long.valueOf(mesa.getId()));
+        for (Comanda comanda : comandas) {
+            ComandaProductoRepository.deleteAll(comanda.getComandaproductos());
+        }
+        comandaRepository.deleteAll(comandas);
+
+        mesa.setEstado("LIBRE");
+
+        mesaRepository.save(mesa);
+    }
+
 }

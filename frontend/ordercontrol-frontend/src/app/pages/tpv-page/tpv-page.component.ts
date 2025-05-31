@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MesaTipoSelectorComponent } from '../tpv/components/mesa-tipo-selector/mesa-tipo-selector.component';
 import { MesaGridComponent } from '../tpv/components/mesa-grid/mesa-grid.component';
@@ -19,12 +19,20 @@ export class TpvPageComponent {
   tipoMesaSeleccionada: string = 'Cafeteria';
   idCategoriaSeleccionada: number | null = null;
 
+  @ViewChild(MesaGridComponent) mesaGridComponent!: MesaGridComponent;
+
   actualizarTipoMesaSeleccionado(tipo: string) {
     this.tipoMesaSeleccionada = tipo;
   }
 
   actualizarCategoriaSeleccionada(idCategoria: number) {
     this.idCategoriaSeleccionada = idCategoria;
+  }
+
+  refrescarMesas() {
+    if (this.mesaGridComponent) {
+      this.mesaGridComponent.recargarMesas();
+    }
   }
 }
 

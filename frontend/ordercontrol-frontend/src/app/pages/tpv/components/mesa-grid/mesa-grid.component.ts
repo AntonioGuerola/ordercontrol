@@ -41,4 +41,13 @@ export class MesaGridComponent implements OnChanges {
   seleccionarMesa(numero: number) {
     this.mesaSeleccionada = numero;
   }
+
+  recargarMesas() {
+  if (this.tipoMesaSeleccionado) {
+    this.mesaService.getMesasPorTipo(this.tipoMesaSeleccionado).subscribe({
+      next: (mesas) => this.mesas = mesas,
+      error: (err) => console.error('Error al recargar mesas:', err)
+    });
+  }
+}
 }
