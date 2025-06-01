@@ -1,11 +1,11 @@
 <div class="grid grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3">
   <button
     *ngFor="let mesa of mesas"
-    (click)="seleccionarMesa(mesa.numMesa)"
+    (click)="seleccionarMesa(mesa)"
     [ngClass]="[
       'h-20 p-3 flex flex-col items-center justify-center gap-1 border-2 transition-all',
       getEstadoColor(mesa.estado),
-      mesaSeleccionada === mesa.numMesa ? 'ring-2 ring-blue-500 ring-offset-2' : ''
+      mesaSeleccionadaInput?.id === mesa.id ? 'ring-2 ring-blue-500 ring-offset-2' : ''
     ]"
   >
     <div class="font-bold text-lg">Mesa {{ mesa.numMesa }}</div>

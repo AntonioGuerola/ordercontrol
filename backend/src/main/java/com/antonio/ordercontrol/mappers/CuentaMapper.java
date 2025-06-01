@@ -4,8 +4,12 @@ import com.antonio.ordercontrol.dtos.CuentaDTO;
 import com.antonio.ordercontrol.models.Cuenta;
 import com.antonio.ordercontrol.models.Mesa;
 import com.antonio.ordercontrol.repositories.MesaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CuentaMapper {
+    @Autowired
     private MesaRepository mesaRepository;
 
     public CuentaDTO toCuentaDTO(Cuenta cuenta) {

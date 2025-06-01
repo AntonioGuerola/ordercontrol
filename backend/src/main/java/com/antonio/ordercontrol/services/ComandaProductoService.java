@@ -3,31 +3,21 @@ package com.antonio.ordercontrol.services;
 import com.antonio.ordercontrol.dtos.ComandaProductoDTO;
 import com.antonio.ordercontrol.exceptions.RecordNotFoundException;
 import com.antonio.ordercontrol.mappers.ComandaProductoMapper;
-import com.antonio.ordercontrol.models.Comanda;
 import com.antonio.ordercontrol.models.Comandaproducto;
-import com.antonio.ordercontrol.models.Producto;
 import com.antonio.ordercontrol.repositories.ComandaProductoRepository;
-import com.antonio.ordercontrol.repositories.ComandaRepository;
-import com.antonio.ordercontrol.repositories.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class ComandaProductoService {
 
     @Autowired
-    private ComandaRepository comandaRepository;
-
-    @Autowired
     private ComandaProductoRepository comandaProductoRepository;
 
     @Autowired
-    private ProductoRepository productoRepository;
-
     private ComandaProductoMapper comandaProductoMapper;
 
     public ComandaProductoDTO createComandaProducto(ComandaProductoDTO comandaProductoDTO){

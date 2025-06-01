@@ -95,4 +95,15 @@ public class ComandaService {
         comanda.setEstado(EstadoComanda.CERRADA.name());
         comandaRepository.save(comanda);
     }
+
+    public Comanda getOrCreateComandaActiva(Long idMesa) {
+        return comandaRepository.findByIdMesa_IdAndEstado(idMesa, EstadoComanda.ABIERTA)
+                .orElseGet(() -> {
+                    Mesa mesa = mesaRepository.findById(idMesa).orElseThrow(() -> new RuntimeException("Mesa no encontrada"));
+                    Comanda nueva = new Comanda();
+                    nueva.setIdMesa(mesa);
+                    nueva.setEstado(EstadoComanda.ABIERTA.name());
+                    return comandaRepository.save(nueva);
+                });
+    }
 }

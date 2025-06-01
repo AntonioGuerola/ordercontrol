@@ -1,6 +1,7 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Mesa, MesaService } from '../../../../core/services/mesa.service';
+import { MesaService } from '../../../../core/services/mesa.service';
+import { Mesa } from '../../../../core/models/mesa';
 
 @Component({
   selector: 'app-mesa-grid',
@@ -11,9 +12,10 @@ import { Mesa, MesaService } from '../../../../core/services/mesa.service';
 })
 export class MesaGridComponent implements OnChanges {
   @Input() tipoMesaSeleccionado: string | null = null;
+  @Input() mesaSeleccionadaInput: Mesa | null = null;
+  @Output() seleccionar = new EventEmitter<Mesa>();
 
   mesas: Mesa[] = [];
-  mesaSeleccionada: number | null = null;
 
   constructor(private mesaService: MesaService) {}
 
@@ -38,8 +40,8 @@ export class MesaGridComponent implements OnChanges {
     }
   }
 
-  seleccionarMesa(numero: number) {
-    this.mesaSeleccionada = numero;
+  seleccionarMesa(mesa : Mesa) {
+    this.seleccionar.emit(mesa);
   }
 
   recargarMesas() {

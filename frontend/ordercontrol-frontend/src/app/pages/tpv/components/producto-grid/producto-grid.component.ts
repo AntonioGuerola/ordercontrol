@@ -1,6 +1,7 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ProductoService, Producto } from '../../../../core/services/producto.service';
+import { ProductoService } from '../../../../core/services/producto.service';
+import { Producto } from '../../../../core/models/producto';
 
 @Component({
   selector: 'app-producto-grid',
@@ -11,9 +12,14 @@ import { ProductoService, Producto } from '../../../../core/services/producto.se
 })
 export class ProductoGridComponent implements OnChanges {
   @Input() idCategoriaSeleccionada: number | null = null;
+  @Output() productoSeleccionado = new EventEmitter<Producto>();
   productos: Producto[] = [];
 
   constructor(private productoService: ProductoService) {}
+
+  seleccionarProducto(producto: Producto) {
+    this.productoSeleccionado.emit(producto);
+  }
 
   ngOnChanges(): void {
     if (this.idCategoriaSeleccionada !== null) {
