@@ -2,14 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { Mesa } from '../models/mesa';
 
-export interface Mesa {
-  id: number;
-  numMesa: number;
-  estado: string;
-  fechaHora?: string;
-  tipo?: string;
-}
+export type {Mesa}; 
 
 @Injectable({
   providedIn: 'root'

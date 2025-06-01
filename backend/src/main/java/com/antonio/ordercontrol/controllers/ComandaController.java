@@ -3,6 +3,7 @@ package com.antonio.ordercontrol.controllers;
 import com.antonio.ordercontrol.dtos.ComandaCreatedDTO;
 import com.antonio.ordercontrol.dtos.ComandaDTO;
 import com.antonio.ordercontrol.exceptions.RecordNotFoundException;
+import com.antonio.ordercontrol.mappers.ComandaMapper;
 import com.antonio.ordercontrol.models.Comanda;
 import com.antonio.ordercontrol.models.EstadoComanda;
 import com.antonio.ordercontrol.models.Mesa;
@@ -80,5 +81,11 @@ public class ComandaController {
     public ResponseEntity<Void> cerrarComanda(@PathVariable Long id){
         comandaService.cerrarComanda(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/mesa/{idMesa}/obtener-o-crear")
+    public ResponseEntity<ComandaDTO> getOrCreateComanda(@PathVariable Long idMesa) {
+        Comanda comanda = comandaService.getOrCreateComandaActiva(idMesa);
+        return ResponseEntity.ok(ComandaMapper.toComandaDTO(comanda));
     }
 }

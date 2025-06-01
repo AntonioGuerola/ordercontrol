@@ -7,9 +7,13 @@ import com.antonio.ordercontrol.models.Producto;
 import com.antonio.ordercontrol.repositories.ComandaRepository;
 import com.antonio.ordercontrol.repositories.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ComandaProductoMapper {
+    @Autowired
     private ComandaRepository comandaRepository;
+    @Autowired
     private ProductoRepository productoRepository;
 
     public ComandaProductoDTO toComandaProductoDTO(Comandaproducto entity) {

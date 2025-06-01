@@ -33,6 +33,7 @@ public class CuentaService {
     @Autowired
     private RegistroCSVService registroCSVService;
 
+    @Autowired
     private CuentaMapper cuentaMapper;
 
     public List<CuentaDTO> getAllCuentas() {

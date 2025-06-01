@@ -6,6 +6,8 @@ import { CategoriaSelectorComponent } from '../tpv/components/categoria-selector
 import { ProductoGridComponent } from '../tpv/components/producto-grid/producto-grid.component';
 import { AccionesCuentaComponent } from '../tpv/components/acciones-cuenta/acciones-cuenta.component';
 import { CuentaComponent } from '../tpv/components/cuenta/cuenta.component';
+import { Producto } from '../../core/models/producto';
+import { Mesa } from '../../core/models/mesa';
 
 
 @Component({
@@ -20,6 +22,19 @@ export class TpvPageComponent {
   idCategoriaSeleccionada: number | null = null;
 
   @ViewChild(MesaGridComponent) mesaGridComponent!: MesaGridComponent;
+
+  @ViewChild(CuentaComponent) cuentaComponent!: CuentaComponent;
+
+  mesaSeleccionada: Mesa | null = null;
+
+  seleccionarMesa(mesa: Mesa) {
+    this.mesaSeleccionada = mesa;
+    this.cuentaComponent.establecerMesa(mesa);
+  }
+
+  onProductoSeleccionado(producto: Producto) {
+    this.cuentaComponent.agregarProductoPendiente(producto);
+  }
 
   actualizarTipoMesaSeleccionado(tipo: string) {
     this.tipoMesaSeleccionada = tipo;
