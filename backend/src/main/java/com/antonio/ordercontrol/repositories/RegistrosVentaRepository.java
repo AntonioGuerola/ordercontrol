@@ -17,5 +17,5 @@ public interface RegistrosVentaRepository extends JpaRepository<RegistrosVenta,L
     Optional<RegistrosVenta> findByFechaFin(LocalDate fechaFin);
 
     @Query("SELECT r FROM RegistrosVenta r WHERE :fecha BETWEEN r.fechaInicio AND r.fechaFin")
-    Optional<RegistrosVenta> findByFechaDentroDelRango(@Param("fecha") LocalDate fecha);
+    List<RegistrosVenta> findByFechaDentroDelRango(@Param("fecha") LocalDate fecha);
 }

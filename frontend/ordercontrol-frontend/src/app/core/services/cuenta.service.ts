@@ -12,7 +12,7 @@ export class CuentaService {
   constructor(private http: HttpClient) {}
 
   obtenerProductos(idMesa: number): Observable<Producto[]> {
-    return this.http.get<Producto[]>(`${this.apiUrl}/cuentas/mesa/${idMesa}`);
+    return this.http.get<Producto[]>(`${this.apiUrl}/cuentas/mesa/${idMesa}/productos`);
   }
 
   actualizarProducto(idMesa: number, producto: Producto): Observable<void> {

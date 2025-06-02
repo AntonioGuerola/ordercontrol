@@ -59,4 +59,10 @@ public class ComandaProductoController {
         ComandaProductoDTO nuevo = comandaProductoService.agregarProductoAComanda(idComanda, dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
     }
+
+    @GetMapping("/mesa/{idMesa}/activa")
+    public ResponseEntity<List<ComandaProductoDTO>> getProductosDeComandaActiva(@PathVariable Long idMesa) {
+        List<ComandaProductoDTO> productos = comandaProductoService.getProductosDeComandaActiva(idMesa);
+        return ResponseEntity.ok(productos);
+    }
 }

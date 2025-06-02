@@ -1,6 +1,7 @@
 package com.antonio.ordercontrol.services;
 
 import com.antonio.ordercontrol.dtos.CuentaDTO;
+import com.antonio.ordercontrol.dtos.CuentaProductoDTO;
 import com.antonio.ordercontrol.exceptions.RecordNotFoundException;
 import com.antonio.ordercontrol.mappers.CuentaMapper;
 import com.antonio.ordercontrol.models.Comanda;
@@ -64,7 +65,6 @@ public class CuentaService {
         cuenta.setSumaTotal(sumaTotal);
         cuenta.setHoraCobro(Instant.now());
 
-        // Marcar comandas como cerradas
         for (Comanda comanda : comandas){
             comanda.setEstado(EstadoComanda.CERRADA.name());
         }
@@ -73,13 +73,11 @@ public class CuentaService {
         Cuenta cuentaGuardada = cuentaRepository.save(cuenta);
 
         try {
-            // Generar CSV + registros
             registroCSVService.procesarCuenta(cuentaGuardada);
         } catch (IOException e) {
             throw new RuntimeException("Error al generar CSV: " + e.getMessage(), e);
         }
 
-        // Eliminar mesa y volverla a crear para mantenerla disponible con mismo num y tipo
         Mesa nuevaMesa = new Mesa();
         nuevaMesa.setNumMesa(mesa.getNumMesa());
         nuevaMesa.setTipo(mesa.getTipo());
@@ -112,4 +110,19 @@ public class CuentaService {
     public List<CuentaDTO> getCuentasByIdMesa(Long idMesa) {
         return cuentaRepository.findByIdMesa_Id(idMesa).stream().map(cuentaMapper::toCuentaDTO).collect(Collectors.toList());
     }
+
+    public List<CuentaProductoDTO> getProductosConsumidosPorMesa(Long idMesa) {
+        List<Comanda> comandas = comandaRepository.findByIdMesa_Id(idMesa);
+
+        return comandas.stream()
+                .flatMap(comanda -> comanda.getComandaproductos().stream())
+                .map(cp -> new CuentaProductoDTO(
+                        cp.getProducto().getNombre(),
+                        cp.getPrecioUnitario(),
+                        cp.getCantidad(),
+                        cp.getProducto().getTipo()
+                ))
+                .collect(Collectors.toList());
+    }
+
 }

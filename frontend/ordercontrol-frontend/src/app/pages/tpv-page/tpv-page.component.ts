@@ -49,5 +49,10 @@ export class TpvPageComponent {
       this.mesaGridComponent.recargarMesas();
     }
   }
+
+  onProductosEnviados() {
+    this.cuentaComponent.productosPendientes = [];
+    this.cuentaComponent.cargarProductosConfirmados();
+  }
 }
 

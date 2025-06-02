@@ -9,7 +9,7 @@ import com.antonio.ordercontrol.models.Usuario;
 public class ComandaMapper {
     public static ComandaDTO toComandaDTO(Comanda comanda){
         ComandaDTO comandaDTO = new ComandaDTO();
-        comandaDTO.setId(comandaDTO.getId().longValue());
+        comandaDTO.setId(comanda.getId().longValue());
         comandaDTO.setFechaCreacion(comanda.getFechaCreacion());
         comandaDTO.setEstado(comanda.getEstado());
         comandaDTO.setIdMesa(comanda.getIdMesa().getId().longValue());

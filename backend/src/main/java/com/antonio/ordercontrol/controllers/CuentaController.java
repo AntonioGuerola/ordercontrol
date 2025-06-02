@@ -1,6 +1,7 @@
 package com.antonio.ordercontrol.controllers;
 
 import com.antonio.ordercontrol.dtos.CuentaDTO;
+import com.antonio.ordercontrol.dtos.CuentaProductoDTO;
 import com.antonio.ordercontrol.exceptions.RecordNotFoundException;
 import com.antonio.ordercontrol.models.Cuenta;
 import com.antonio.ordercontrol.services.CuentaService;
@@ -54,4 +55,11 @@ public class CuentaController {
     public void deleteCuenta(@PathVariable Long id) throws RecordNotFoundException {
         cuentaService.deleteCuenta(id);
     }
+
+    @GetMapping("/mesa/{idMesa}/productos")
+    public ResponseEntity<List<CuentaProductoDTO>> getProductosPorMesa(@PathVariable Long idMesa) {
+        List<CuentaProductoDTO> productos = cuentaService.getProductosConsumidosPorMesa(idMesa);
+        return ResponseEntity.ok(productos);
+    }
+
 }

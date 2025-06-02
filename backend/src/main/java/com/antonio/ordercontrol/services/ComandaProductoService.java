@@ -4,7 +4,9 @@ import com.antonio.ordercontrol.dtos.ComandaProductoDTO;
 import com.antonio.ordercontrol.exceptions.RecordNotFoundException;
 import com.antonio.ordercontrol.mappers.ComandaProductoMapper;
 import com.antonio.ordercontrol.models.Comandaproducto;
+import com.antonio.ordercontrol.models.EstadoComanda;
 import com.antonio.ordercontrol.repositories.ComandaProductoRepository;
+import com.antonio.ordercontrol.repositories.ComandaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,9 @@ public class ComandaProductoService {
 
     @Autowired
     private ComandaProductoMapper comandaProductoMapper;
+
+    @Autowired
+    private ComandaRepository comandaRepository;
 
     public ComandaProductoDTO createComandaProducto(ComandaProductoDTO comandaProductoDTO){
         Comandaproducto comandaproducto = comandaProductoMapper.toEntity(comandaProductoDTO);
@@ -63,4 +68,14 @@ public class ComandaProductoService {
 
         return comandaProductoMapper.toComandaProductoDTO(comandaProductoRepository.save(comandaproducto));
     }
+
+    public List<ComandaProductoDTO> getProductosDeComandaActiva(Long idMesa) {
+        return comandaRepository.findByIdMesa_IdAndEstado(idMesa, EstadoComanda.ABIERTA)
+                .map(comanda -> comandaProductoRepository.findByComandaId(Long.valueOf(comanda.getId())))
+                .orElse(List.of())
+                .stream()
+                .map(comandaProductoMapper::toComandaProductoDTO)
+                .collect(Collectors.toList());
+    }
+
 }

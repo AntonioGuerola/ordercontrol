@@ -1,0 +1,80 @@
+Mesa,Hora Cobro,Producto,Cantidad,Precio Unitario,Total
+1,2025-06-02T22:22:28.426421900Z,Coca Cola Zero Zero,2,2,20,4,40
+1,2025-06-02T22:22:28.426421900Z,San Miguel 00,1,2,60,2,60
+
+--- ANÁLISIS ---
+Mesa(s) más usada(s):
+- Mesa 1 (Cafeteria) con 1 comandas
+
+Top 3 productos por categoría:
+Categoría: Refrescos
+- Coca Cola Zero Zero: 2 unidades
+
+Categoría: Cervezas
+- San Miguel 00: 1 unidades
+- Mahou 5 Estrellas: 0 unidades
+
+Mesa,Hora Cobro,Producto,Cantidad,Precio Unitario,Total
+1,2025-06-02T22:23:36.240487800Z,Coca Cola Zero Zero,2,2,20,4,40
+1,2025-06-02T22:23:36.240487800Z,San Miguel 00,1,2,60,2,60
+
+--- ANÁLISIS ---
+Mesa(s) más usada(s):
+- Mesa 1 (Cafeteria) con 1 comandas
+
+Top 3 productos por categoría:
+Categoría: Refrescos
+- Coca Cola Zero Zero: 2 unidades
+
+Categoría: Cervezas
+- San Miguel 00: 1 unidades
+- Mahou 5 Estrellas: 0 unidades
+
+Mesa,Hora Cobro,Producto,Cantidad,Precio Unitario,Total
+1,2025-06-02T22:23:49.022216700Z,Coca Cola Zero Zero,2,2,20,4,40
+1,2025-06-02T22:23:49.022216700Z,San Miguel 00,1,2,60,2,60
+
+--- ANÁLISIS ---
+Mesa(s) más usada(s):
+- Mesa 1 (Cafeteria) con 1 comandas
+
+Top 3 productos por categoría:
+Categoría: Refrescos
+- Coca Cola Zero Zero: 2 unidades
+
+Categoría: Cervezas
+- San Miguel 00: 1 unidades
+- Mahou 5 Estrellas: 0 unidades
+
+Mesa,Hora Cobro,Producto,Cantidad,Precio Unitario,Total
+1,2025-06-02T22:27:28.881709800Z,Coca Cola Zero Zero,2,2,20,4,40
+1,2025-06-02T22:27:28.881709800Z,San Miguel 00,1,2,60,2,60
+
+--- ANÁLISIS ---
+Mesa(s) más usada(s):
+- Mesa 1 (Cafeteria) con 1 comandas
+
+Top 3 productos por categoría:
+Categoría: Refrescos
+- Coca Cola Zero Zero: 2 unidades
+
+Categoría: Cervezas
+- San Miguel 00: 1 unidades
+- Mahou 5 Estrellas: 0 unidades
+
+Mesa,Hora Cobro,Producto,Cantidad,Precio Unitario,Total
+1,2025-06-02T22:35:37.354770200Z,Coca Cola Zero Zero,2,2,20,4,40
+1,2025-06-02T22:35:37.354770200Z,San Miguel 00,1,2,60,2,60
+
+--- ANÁLISIS ---
+Mesa(s) más usada(s):
+- Mesa 1 (Cafeteria) con 1 comandas
+
+Top 3 productos por categoría:
+Categoría: Refrescos
+- Coca Cola Zero Zero: 2 unidades
+
+Categoría: Cervezas
+- San Miguel 00: 1 unidades
+- Mahou 5 Estrellas: 0 unidades
+
