@@ -66,8 +66,11 @@ public class RegistrosVentaService {
     }
 
     public RegistrosVentasDTO findByFechaDentroDelRango(LocalDate fecha) {
-        return registrosVentaRepository.findByFechaDentroDelRango(fecha)
-                .map(registrosVentasMapper::toRegistrosVentasDTO)
-                .orElseThrow(() -> new RecordNotFoundException("No se encontró ningún registro dentro del rango que incluya la fecha: ", fecha));
+        List<RegistrosVenta> registros = registrosVentaRepository.findByFechaDentroDelRango(fecha);
+
+        if (registros.isEmpty()) {
+            throw new RecordNotFoundException("No se encontró ningún registro dentro del rango que incluya la fecha: ", fecha);
+        }
+        return registrosVentasMapper.toRegistrosVentasDTO(registros.get(0));
     }
 }

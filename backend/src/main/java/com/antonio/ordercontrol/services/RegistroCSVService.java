@@ -104,14 +104,20 @@ public class RegistroCSVService {
         actualizarRegistroVenta(TipoPeriodo.ANUAL, hoy.withDayOfYear(1), hoy.withDayOfYear(hoy.lengthOfYear()), cuenta.getSumaTotal());
     }
 
-    private void actualizarRegistroVenta(TipoPeriodo tipo, LocalDate inicio, LocalDate fin, BigDecimal monto) {
-        Optional<RegistrosVenta> existente = registrosVentaRepository.findByFechaDentroDelRango(inicio);
+    private void actualizarRegistroVenta(TipoPeriodo tipo, LocalDate inicio, LocalDate fin, BigDecimal monto) {    List<RegistrosVenta> existentes = registrosVentaRepository.findByFechaDentroDelRango(inicio);
+        RegistrosVenta rv;
+        if (!existentes.isEmpty()) {
+            rv = existentes.get(0);
+        } else {
+            rv = new RegistrosVenta();
+            rv.setTipoPeriodo(tipo.name());
+            rv.setFechaInicio(inicio);
+            rv.setFechaFin(fin);
+            rv.setMontoTotal(BigDecimal.ZERO);
+        }
 
-        RegistrosVenta rv = existente.orElse(new RegistrosVenta());
-        rv.setTipoPeriodo(tipo.name());
-        rv.setFechaInicio(inicio);
-        rv.setFechaFin(fin);
-        rv.setMontoTotal(rv.getMontoTotal() == null ? monto : rv.getMontoTotal().add(monto));
+        rv.setMontoTotal(rv.getMontoTotal().add(monto));
         registrosVentaRepository.save(rv);
+
     }
 }

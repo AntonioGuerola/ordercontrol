@@ -9,6 +9,7 @@ import { AccionesCuentaService } from '../../../../core/services/acciones-cuenta
 import { Mesa } from '../../../../core/models/mesa';
 import { CuentaComponent } from '../cuenta/cuenta.component';
 import { forkJoin } from 'rxjs';
+import { Producto } from '../../../../core/models/producto';
 
 @Component({
   selector: 'app-acciones-cuenta',
@@ -16,22 +17,36 @@ import { forkJoin } from 'rxjs';
   styleUrls: ['./acciones-cuenta.component.css'],
 })
 export class AccionesCuentaComponent {
-  @Input() mesa!: Mesa;
   @Output() mesaAnulada = new EventEmitter<void>();
 
-  @ViewChild(CuentaComponent) cuentaComponent!: CuentaComponent;
+  @Input() productosPendientes: Producto[] = [];
+  @Input() mesa: Mesa | null = null;
+  @Output() productosEnviados = new EventEmitter<void>();
 
   constructor(private accionesCuentaService: AccionesCuentaService) {}
 
   cobrarCuenta() {
+    if (!this.mesa) {
+      alert('No hay mesa seleccionada.');
+      return;
+    }
     this.accionesCuentaService.cobrarCuenta(this.mesa.id).subscribe(() => {});
   }
 
   imprimirCuenta() {
+    if (!this.mesa) {
+      alert('No hay mesa seleccionada.');
+      return;
+    }
     this.accionesCuentaService.imprimirCuenta(this.mesa.id);
   }
 
   anularCuenta() {
+    if (!this.mesa) {
+      alert('No hay mesa seleccionada.');
+      return;
+    }
+
     if (confirm('¿Está seguro de que desea anular la cuenta de la mesa?')) {
       this.accionesCuentaService.anularCuenta(this.mesa.id).subscribe(() => {
         this.mesaAnulada.emit();
@@ -40,23 +55,20 @@ export class AccionesCuentaComponent {
   }
 
   enviarComanda() {
-    const productos = this.cuentaComponent.productosPendientes;
-    const mesa = this.cuentaComponent.mesa;
-
-    if (!mesa) {
+    if (!this.mesa) {
       alert('No hay mesa seleccionada.');
       return;
     }
 
-    if (!productos.length) {
+    if (!this.productosPendientes.length) {
       alert('No hay productos para enviar.');
       return;
     }
 
     this.accionesCuentaService
-      .obtenerOCrearComanda(mesa.id)
+      .obtenerOCrearComanda(this.mesa.id)
       .subscribe((comanda) => {
-        const peticiones = productos.map((producto) =>
+        const peticiones = this.productosPendientes.map((producto) =>
           this.accionesCuentaService.agregarProductoAComanda(
             comanda.id,
             producto
@@ -64,18 +76,17 @@ export class AccionesCuentaComponent {
         );
 
         forkJoin(peticiones).subscribe(() => {
-          const cocina = productos
+          const cocina = this.productosPendientes
             .filter((p) => p.tipo === 'COCINA')
             .map((p) => p.nombre);
-          const barra = productos
+          const barra = this.productosPendientes
             .filter((p) => p.tipo === 'BARRA')
             .map((p) => p.nombre);
 
           if (cocina.length) alert(`Enviado a cocina: ${cocina.join(', ')}`);
           if (barra.length) alert(`Enviado a barra: ${barra.join(', ')}`);
 
-          this.cuentaComponent.productosPendientes = [];
-          this.cuentaComponent.cargarProductosConfirmados();
+          this.productosEnviados.emit();
         });
       });
   }
