@@ -29,7 +29,7 @@ public class Mesa {
     @Column(name = "fecha_hora")
     private Instant fechaHora;
 
-    @OneToMany(mappedBy = "idMesa")
+    @OneToMany(mappedBy = "idMesa", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comanda> comandas = new ArrayList<>();
 
     @OneToMany(mappedBy = "idMesa")

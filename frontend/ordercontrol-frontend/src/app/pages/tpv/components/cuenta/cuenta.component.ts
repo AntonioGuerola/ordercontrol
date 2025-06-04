@@ -87,4 +87,11 @@ export class CuentaComponent implements OnInit {
       this.productosConfirmados = productos;
     });
   }
+
+  limpiarCuenta() {
+    this.productosConfirmados = [];
+    this.productosPendientes = [];
+    this.mesa = null;
+    this.mesaNumero = null;
+  }
 }

@@ -100,6 +100,10 @@ public class ComandaService {
         return comandaRepository.findByIdMesa_IdAndEstado(idMesa, EstadoComanda.ABIERTA)
                 .orElseGet(() -> {
                     Mesa mesa = mesaRepository.findById(idMesa).orElseThrow(() -> new RuntimeException("Mesa no encontrada"));
+
+                    mesa.setEstado("Ocupada");
+                    mesaRepository.save(mesa);
+
                     Comanda nueva = new Comanda();
                     nueva.setIdMesa(mesa);
                     nueva.setEstado(EstadoComanda.ABIERTA.name());

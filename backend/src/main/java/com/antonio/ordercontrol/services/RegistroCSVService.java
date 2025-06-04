@@ -26,7 +26,6 @@ public class RegistroCSVService {
         Path ruta = Paths.get("registros", nombreArchivo);
         Files.createDirectories(ruta.getParent());
 
-        // --- Generar CSV ---
         try (BufferedWriter writer = Files.newBufferedWriter(ruta, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.APPEND)) {
             writer.write("Mesa,Hora Cobro,Producto,Cantidad,Precio Unitario,Total\n");
 
@@ -47,7 +46,6 @@ public class RegistroCSVService {
 
             writer.write("\n--- ANÁLISIS ---\n");
 
-            // Mesa más usada (por cantidad de comandas)
             List<Mesa> todasMesas = mesaRepository.findAll();
             int maxUso = todasMesas.stream()
                     .mapToInt(m -> m.getComandas().size())
@@ -62,7 +60,6 @@ public class RegistroCSVService {
                 writer.write("- Mesa " + m.getNumMesa() + " (" + m.getTipo().getNombre() + ") con " + m.getComandas().size() + " comandas\n");
             }
 
-            // Top 3 productos por categoría
             List<Producto> productos = productoRepository.findAll();
 
             Map<String, Map<String, Integer>> productosPorCategoria = new HashMap<>();
@@ -97,7 +94,6 @@ public class RegistroCSVService {
             }
         }
 
-        // --- Actualizar registros globales ---
         actualizarRegistroVenta(TipoPeriodo.DIARIO, hoy, hoy, cuenta.getSumaTotal());
         actualizarRegistroVenta(TipoPeriodo.SEMANAL, hoy.with(DayOfWeek.MONDAY), hoy.with(DayOfWeek.SUNDAY), cuenta.getSumaTotal());
         actualizarRegistroVenta(TipoPeriodo.MENSUAL, hoy.withDayOfMonth(1), hoy.withDayOfMonth(hoy.lengthOfMonth()), cuenta.getSumaTotal());

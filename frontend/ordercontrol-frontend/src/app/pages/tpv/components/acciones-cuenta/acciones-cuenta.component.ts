@@ -22,6 +22,8 @@ export class AccionesCuentaComponent {
   @Input() productosPendientes: Producto[] = [];
   @Input() mesa: Mesa | null = null;
   @Output() productosEnviados = new EventEmitter<void>();
+  @Output() cuentaCobrada = new EventEmitter<void>();
+  @Output() refrescarEstadoMesa = new EventEmitter<void>();
 
   constructor(private accionesCuentaService: AccionesCuentaService) {}
 
@@ -30,7 +32,11 @@ export class AccionesCuentaComponent {
       alert('No hay mesa seleccionada.');
       return;
     }
-    this.accionesCuentaService.cobrarCuenta(this.mesa.id).subscribe(() => {});
+
+    this.accionesCuentaService.cobrarCuenta(this.mesa.id).subscribe(() => {
+      alert('Cuenta cobrada correctamente.');
+      this.cuentaCobrada.emit();
+    });
   }
 
   imprimirCuenta() {
@@ -48,8 +54,15 @@ export class AccionesCuentaComponent {
     }
 
     if (confirm('¿Está seguro de que desea anular la cuenta de la mesa?')) {
-      this.accionesCuentaService.anularCuenta(this.mesa.id).subscribe(() => {
-        this.mesaAnulada.emit();
+      this.accionesCuentaService.anularCuenta(this.mesa.id).subscribe({
+        next: () => {
+          this.mesaAnulada.emit();
+          this.refrescarEstadoMesa.emit();
+        },
+        error: (err) => {
+          console.error('Error al anular mesa:', err);
+          alert('Error al anular mesa.');
+        },
       });
     }
   }
@@ -87,6 +100,7 @@ export class AccionesCuentaComponent {
           if (barra.length) alert(`Enviado a barra: ${barra.join(', ')}`);
 
           this.productosEnviados.emit();
+          this.refrescarEstadoMesa.emit();
         });
       });
   }

@@ -1,0 +1,15 @@
+Mesa,Hora Cobro,Producto,Cantidad,Precio Unitario,Total
+1,2025-06-04T11:28:13.770429100Z,Mahou 5 Estrellas,3,2,60,7,80
+
+--- ANÁLISIS ---
+Mesa(s) más usada(s):
+- Mesa 1 (Cafeteria) con 1 comandas
+
+Top 3 productos por categoría:
+Categoría: Refrescos
+- Coca Cola Zero Zero: 0 unidades
+
+Categoría: Cervezas
+- Mahou 5 Estrellas: 3 unidades
+- San Miguel 00: 0 unidades
+
