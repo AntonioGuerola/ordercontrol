@@ -38,7 +38,7 @@ public class Comanda {
     @Column(name = "id_cuenta")
     private Integer idCuenta;
 
-    @OneToMany(mappedBy = "comanda")
+    @OneToMany(mappedBy = "comanda", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comandaproducto> comandaproductos = new ArrayList<>();
 
     public Integer getId() {

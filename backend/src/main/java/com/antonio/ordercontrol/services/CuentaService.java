@@ -52,11 +52,13 @@ public class CuentaService {
     }
 
     public CuentaDTO generarCuentaParaMesa(Long idMesa) {
-        Mesa mesa = mesaRepository.findById(idMesa).orElseThrow(() -> new RuntimeException("Mesa no encontrada."));
+        Mesa mesa = mesaRepository.findById(idMesa)
+                .orElseThrow(() -> new RuntimeException("Mesa no encontrada."));
 
-        List<Comanda> comandas = comandaRepository.findByIdMesaAndEstado(mesa, EstadoComanda.CERRADA);
+        List<Comanda> comandas = comandaRepository.findByIdMesa_Id(mesa.getId().longValue());
 
-        BigDecimal sumaTotal = comandas.stream().flatMap(comanda -> comanda.getComandaproductos().stream())
+        BigDecimal sumaTotal = comandas.stream()
+                .flatMap(c -> c.getComandaproductos().stream())
                 .map(cp -> cp.getPrecioUnitario().multiply(BigDecimal.valueOf(cp.getCantidad())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
@@ -64,11 +66,6 @@ public class CuentaService {
         cuenta.setIdMesa(mesa);
         cuenta.setSumaTotal(sumaTotal);
         cuenta.setHoraCobro(Instant.now());
-
-        for (Comanda comanda : comandas){
-            comanda.setEstado(EstadoComanda.CERRADA.name());
-        }
-        comandaRepository.saveAll(comandas);
 
         Cuenta cuentaGuardada = cuentaRepository.save(cuenta);
 
@@ -78,16 +75,13 @@ public class CuentaService {
             throw new RuntimeException("Error al generar CSV: " + e.getMessage(), e);
         }
 
-        Mesa nuevaMesa = new Mesa();
-        nuevaMesa.setNumMesa(mesa.getNumMesa());
-        nuevaMesa.setTipo(mesa.getTipo());
+        mesa.setEstado("LIBRE");
+        mesaRepository.save(mesa);
 
-        mesaRepository.delete(mesa);
-        mesaRepository.save(nuevaMesa);
+        comandaRepository.deleteAll(comandas);
 
         return cuentaMapper.toCuentaDTO(cuentaGuardada);
     }
-
 
     public CuentaDTO updateCuenta(Long id, CuentaDTO nuevaCuenta) throws RecordNotFoundException {
         Cuenta cuenta =  cuentaRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("No hay Cuenta para el id: ", id));
@@ -124,5 +118,4 @@ public class CuentaService {
                 ))
                 .collect(Collectors.toList());
     }
-
 }

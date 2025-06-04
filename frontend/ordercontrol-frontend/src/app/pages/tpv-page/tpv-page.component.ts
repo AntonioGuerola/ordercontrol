@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MesaTipoSelectorComponent } from '../tpv/components/mesa-tipo-selector/mesa-tipo-selector.component';
 import { MesaGridComponent } from '../tpv/components/mesa-grid/mesa-grid.component';
@@ -9,23 +9,31 @@ import { CuentaComponent } from '../tpv/components/cuenta/cuenta.component';
 import { Producto } from '../../core/models/producto';
 import { Mesa } from '../../core/models/mesa';
 
-
 @Component({
   selector: 'app-tpv-page',
-  imports: [CommonModule, MesaTipoSelectorComponent, MesaGridComponent, CategoriaSelectorComponent, ProductoGridComponent, AccionesCuentaComponent, CuentaComponent],
+  imports: [
+    CommonModule,
+    MesaTipoSelectorComponent,
+    MesaGridComponent,
+    CategoriaSelectorComponent,
+    ProductoGridComponent,
+    AccionesCuentaComponent,
+    CuentaComponent,
+  ],
   standalone: true,
   templateUrl: './tpv-page.component.html',
-  styleUrl: './tpv-page.component.css'
+  styleUrl: './tpv-page.component.css',
 })
 export class TpvPageComponent {
   tipoMesaSeleccionada: string = 'Cafeteria';
   idCategoriaSeleccionada: number | null = null;
 
   @ViewChild(MesaGridComponent) mesaGridComponent!: MesaGridComponent;
-
   @ViewChild(CuentaComponent) cuentaComponent!: CuentaComponent;
 
   mesaSeleccionada: Mesa | null = null;
+
+  constructor(private cdr: ChangeDetectorRef) {}
 
   seleccionarMesa(mesa: Mesa) {
     this.mesaSeleccionada = mesa;
@@ -53,6 +61,25 @@ export class TpvPageComponent {
   onProductosEnviados() {
     this.cuentaComponent.productosPendientes = [];
     this.cuentaComponent.cargarProductosConfirmados();
+    this.refrescarMesas();
+    this.cdr.detectChanges();
+  }
+
+  onCuentaCobrada() {
+    this.cuentaComponent.limpiarCuenta();
+    this.mesaSeleccionada = null;
+    setTimeout(() => {
+      this.refrescarMesas();
+      this.cdr.detectChanges();
+    }, 0);
+  }
+
+  mesaAnulada() {
+    this.cuentaComponent.limpiarCuenta();
+    this.mesaSeleccionada = null;
+    setTimeout(() => {
+      this.refrescarMesas();
+      this.cdr.detectChanges();
+    }, 0);
   }
 }
-

@@ -10,8 +10,10 @@
       <app-acciones-cuenta
         [mesa]="mesaSeleccionada"
         [productosPendientes]="cuentaComponent?.productosPendientes || []"
-        (mesaAnulada)="refrescarMesas()"
+        (mesaAnulada)="mesaAnulada()"
         (productosEnviados)="onProductosEnviados()"
+        (cuentaCobrada)="onCuentaCobrada()"
+        (refrescarEstadoMesa)="refrescarMesas()"
       ></app-acciones-cuenta>
       <app-cuenta [mesa]="mesaSeleccionada"></app-cuenta>
     </div>

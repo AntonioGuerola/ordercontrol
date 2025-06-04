@@ -1,4 +1,11 @@
-import { Component, Input, OnChanges, SimpleChanges, EventEmitter, Output } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  EventEmitter,
+  Output,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MesaService } from '../../../../core/services/mesa.service';
 import { Mesa } from '../../../../core/models/mesa';
@@ -8,7 +15,7 @@ import { Mesa } from '../../../../core/models/mesa';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './mesa-grid.component.html',
-  styleUrl: './mesa-grid.component.css'
+  styleUrl: './mesa-grid.component.css',
 })
 export class MesaGridComponent implements OnChanges {
   @Input() tipoMesaSeleccionado: string | null = null;
@@ -21,11 +28,10 @@ export class MesaGridComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['tipoMesaSeleccionado'] && this.tipoMesaSeleccionado) {
-      this.mesaService.getMesasPorTipo(this.tipoMesaSeleccionado)
-        .subscribe({
-          next: (mesas) => this.mesas = mesas,
-          error: (err) => console.error('Error al obtener mesas:', err)
-        });
+      this.mesaService.getMesasPorTipo(this.tipoMesaSeleccionado).subscribe({
+        next: (mesas) => (this.mesas = mesas),
+        error: (err) => console.error('Error al obtener mesas:', err),
+      });
     }
   }
 
@@ -40,16 +46,18 @@ export class MesaGridComponent implements OnChanges {
     }
   }
 
-  seleccionarMesa(mesa : Mesa) {
+  seleccionarMesa(mesa: Mesa) {
     this.seleccionar.emit(mesa);
   }
 
   recargarMesas() {
-  if (this.tipoMesaSeleccionado) {
-    this.mesaService.getMesasPorTipo(this.tipoMesaSeleccionado).subscribe({
-      next: (mesas) => this.mesas = mesas,
-      error: (err) => console.error('Error al recargar mesas:', err)
-    });
+    if (this.tipoMesaSeleccionado) {
+      this.mesaService.getMesasPorTipo(this.tipoMesaSeleccionado).subscribe({
+        next: (mesas) => {
+          this.mesas = [...mesas];
+        },
+        error: (err) => console.error('Error al recargar mesas:', err),
+      });
+    }
   }
-}
 }
