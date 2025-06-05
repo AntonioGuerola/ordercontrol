@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { saveAs } from 'file-saver';
-import pdfMake from 'pdfmake/build/pdfmake';
-import pdfFonts from 'pdfmake/build/vfs_fonts';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import { Observable } from 'rxjs';
 import { Producto } from '../models/producto';
-
-pdfMake.vfs = pdfMake.vfs;
 
 @Injectable({
   providedIn: 'root',
@@ -41,26 +39,80 @@ export class AccionesCuentaService {
                   observer.next();
                   observer.complete();
                 },
-                error: (err) => {
-                  observer.error(err);
-                },
+                error: (err) => observer.error(err),
               });
           },
-          error: (err) => {
-            observer.error(err);
-          },
+          error: (err) => observer.error(err),
         });
     });
   }
 
   imprimirCuenta(idMesa: number) {
     this.http
-      .get<any[]>(`${this.apiUrl}/cuentas/mesa/${idMesa}`)
-      .subscribe((cuentas) => {
-        const cuenta = cuentas[cuentas.length - 1];
-        const docDefinition = this.generarPDF(cuenta);
-        const nombreArchivo = `${cuenta.tipoMesa}_${cuenta.idMesa}.pdf`;
-        pdfMake.createPdf(docDefinition).download(nombreArchivo);
+      .get<any>(`${this.apiUrl}/cuentas/mesa/${idMesa}/generar-temporal`)
+      .subscribe({
+        next: (cuenta) => {
+          const doc = new jsPDF();
+          const fecha = new Date();
+          const horaCobro = fecha.toLocaleTimeString('es-ES', {
+            hour: '2-digit',
+            minute: '2-digit',
+          });
+
+          const productos = cuenta.productos.map((p: any) => {
+            const cantidad = p.cantidad ?? 0;
+            const nombre = p.nombre ?? '';
+            const precioUnitario = p.precio ?? 0;
+            const total = (precioUnitario * cantidad).toFixed(2);
+
+            return [cantidad, nombre, precioUnitario.toFixed(2), total];
+          });
+
+          const totalSinIVA = cuenta.productos.reduce((acc: number, p: any) => {
+            const cantidad = p.cantidad ?? 0;
+            const precioUnitario = p.precio ?? 0;
+            return acc + precioUnitario * cantidad;
+          }, 0);
+
+          const totalConIVA = (totalSinIVA * 1.21).toFixed(2);
+
+          doc.setFontSize(16);
+          doc.text(
+            `Cuenta de la Mesa ${cuenta.tipoMesa ?? ''} ${
+              cuenta.numMesa ?? cuenta.idMesa ?? ''
+            }`,
+            10,
+            10
+          );
+
+          doc.setFontSize(12);
+          doc.text(`Hora de cobro: ${horaCobro}`, 10, 20);
+
+          autoTable(doc, {
+            startY: 30,
+            head: [['Cantidad', 'Producto', 'Precio Unitario', 'Total']],
+            body: productos,
+          });
+
+          const finalY = (doc as any).lastAutoTable.finalY || 50;
+          doc.text(
+            `Total sin IVA: ${totalSinIVA.toFixed(2)} €`,
+            140,
+            finalY + 10
+          );
+          doc.text(`Total con IVA (21%): ${totalConIVA} €`, 140, finalY + 20);
+
+          doc.save(
+            `Cuenta_Mesa_${
+              cuenta.numMesa ?? cuenta.idMesa ?? 'desconocida'
+            }.pdf`
+          );
+        },
+        error: (err) => {
+          alert(
+            err?.error?.message || 'Error al generar la cuenta para imprimir.'
+          );
+        },
       });
   }
 
@@ -91,44 +143,6 @@ export class AccionesCuentaService {
     });
 
     return csv;
-  }
-
-  private generarPDF(cuenta: any): any {
-    const productos = cuenta.productos.map((producto: any) => {
-      return [
-        producto.nombre,
-        producto.precioUnitario,
-        producto.cantidad,
-        producto.precioUnitario * producto.cantidad,
-      ];
-    });
-
-    return {
-      content: [
-        {
-          text: `Cuenta de la Mesa ${cuenta.tipoMesa} ${cuenta.idMesa}`,
-          style: 'header',
-        },
-        { text: `Hora de Cobro: ${cuenta.horaCobro}` },
-        { text: `Monto Total: ${cuenta.sumaTotal}` },
-        { text: `Método de Pago: ${cuenta.metodoPago}` },
-        {
-          table: {
-            widths: ['*', '*', '*', '*'],
-            body: [
-              ['Producto', 'Precio Unitario', 'Cantidad', 'Total'],
-              ...productos,
-            ],
-          },
-        },
-      ],
-      styles: {
-        header: {
-          fontSize: 18,
-          bold: true,
-        },
-      },
-    };
   }
 
   obtenerOCrearComanda(idMesa: number): Observable<any> {

@@ -145,4 +145,41 @@ public class CuentaService {
                 ))
                 .collect(Collectors.toList());
     }
+
+    public CuentaDTO generarCuentaTemporalParaImpresion(Long idMesa) {
+        Mesa mesa = mesaRepository.findById(idMesa)
+                .orElseThrow(() -> new RuntimeException("Mesa no encontrada."));
+
+        List<Comanda> comandas = comandaRepository.findByIdMesa_Id(idMesa);
+
+        boolean sinProductos = comandas.isEmpty() || comandas.stream()
+                .allMatch(c -> c.getComandaproductos().isEmpty());
+
+        if (sinProductos) {
+            throw new RuntimeException("No hay productos en la mesa para imprimir.");
+        }
+
+        BigDecimal sumaTotal = comandas.stream()
+                .flatMap(c -> c.getComandaproductos().stream())
+                .map(cp -> cp.getPrecioUnitario().multiply(BigDecimal.valueOf(cp.getCantidad())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        List<CuentaProductoDTO> productos = comandas.stream()
+                .flatMap(c -> c.getComandaproductos().stream())
+                .map(cp -> new CuentaProductoDTO(
+                        cp.getProducto().getNombre(),
+                        cp.getPrecioUnitario(),
+                        cp.getCantidad(),
+                        cp.getProducto().getTipo()
+                )).collect(Collectors.toList());
+
+        CuentaDTO cuentaDTO = new CuentaDTO();
+        cuentaDTO.setIdMesa(mesa.getId().longValue());
+        cuentaDTO.setSumaTotal(sumaTotal);
+        cuentaDTO.setHoraCobro(Instant.now());
+        cuentaDTO.setProductos(productos);
+
+        return cuentaDTO;
+    }
+
 }
