@@ -70,4 +70,24 @@ public class CuentaController {
         return ResponseEntity.ok(productos);
     }
 
+    @PostMapping("/imprimir/mesa/{idMesa}")
+    public ResponseEntity<CuentaDTO> imprimirCuentaMesa(@PathVariable Long idMesa) {
+        try {
+            CuentaDTO cuentaDTO = cuentaService.generarCuentaParaMesa(idMesa);
+            return ResponseEntity.ok(cuentaDTO);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+    @GetMapping("/mesa/{idMesa}/generar-temporal")
+    public ResponseEntity<?> generarCuentaTemporal(@PathVariable Long idMesa) {
+        try {
+            CuentaDTO cuentaDTO = cuentaService.generarCuentaTemporalParaImpresion(idMesa);
+            return ResponseEntity.ok(cuentaDTO);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", e.getMessage()));
+        }
+    }
+
 }

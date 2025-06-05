@@ -212,3 +212,44 @@ Categoría: Cervezas
 - Mahou 5 Estrellas: 3 unidades
 - San Miguel 00: 0 unidades
 
+Mesa,Hora Cobro,Producto,Cantidad,Precio Unitario,Total
+1,2025-06-05T16:31:24.315250500Z,Mahou 5 Estrellas,3,2,60,7,80
+1,2025-06-05T16:31:24.315250500Z,San Miguel 00,2,2,60,5,20
+1,2025-06-05T16:31:24.315250500Z,Mahou 5 Estrellas,2,2,60,5,20
+1,2025-06-05T16:31:24.315250500Z,Coca Cola Zero Zero,3,2,20,6,60
+1,2025-06-05T16:31:24.315250500Z,San Miguel 00,2,2,60,5,20
+1,2025-06-05T16:31:24.315250500Z,Mahou 5 Estrellas,3,2,60,7,80
+1,2025-06-05T16:31:24.315250500Z,Mahou 5 Estrellas,4,2,60,10,40
+
+--- ANÁLISIS ---
+Mesa(s) más usada(s):
+- Mesa 1 (Cafeteria) con 1 comandas
+
+Top 3 productos por categoría:
+Categoría: Refrescos
+- Coca Cola Zero Zero: 3 unidades
+
+Categoría: Cervezas
+- Mahou 5 Estrellas: 12 unidades
+- San Miguel 00: 4 unidades
+
+Mesa,Hora Cobro,Producto,Cantidad,Precio Unitario,Total
+1,2025-06-05T16:33:05.775228100Z,Mahou 5 Estrellas,5,2,60,13,00
+1,2025-06-05T16:33:05.775228100Z,San Miguel 00,2,2,60,5,20
+1,2025-06-05T16:33:05.775228100Z,Mahou 5 Estrellas,2,2,60,5,20
+1,2025-06-05T16:33:05.775228100Z,San Miguel 00,1,2,60,2,60
+1,2025-06-05T16:33:05.775228100Z,Coca Cola Zero Zero,3,2,20,6,60
+1,2025-06-05T16:33:05.775228100Z,Mahou 5 Estrellas,2,2,60,5,20
+
+--- ANÁLISIS ---
+Mesa(s) más usada(s):
+- Mesa 1 (Cafeteria) con 1 comandas
+
+Top 3 productos por categoría:
+Categoría: Refrescos
+- Coca Cola Zero Zero: 3 unidades
+
+Categoría: Cervezas
+- Mahou 5 Estrellas: 9 unidades
+- San Miguel 00: 3 unidades
+
