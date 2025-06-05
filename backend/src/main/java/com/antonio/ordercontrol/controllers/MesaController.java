@@ -70,4 +70,10 @@ public class MesaController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @PutMapping("/{id}/liberar")
+    public ResponseEntity<Void> liberarMesa(@PathVariable Long id) {
+        mesaService.liberarMesa(id);
+        return ResponseEntity.ok().build();
+    }
 }

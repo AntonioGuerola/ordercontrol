@@ -12,14 +12,29 @@ export class CuentaService {
   constructor(private http: HttpClient) {}
 
   obtenerProductos(idMesa: number): Observable<Producto[]> {
-    return this.http.get<Producto[]>(`${this.apiUrl}/cuentas/mesa/${idMesa}/productos`);
+    if (!idMesa) {
+      console.warn('ID de mesa inválido');
+      return new Observable<Producto[]>((subscriber) => {
+        subscriber.next([]);
+        subscriber.complete();
+      });
+    }
+
+    return this.http.get<Producto[]>(
+      `${this.apiUrl}/cuentas/mesa/${idMesa}/productos`
+    );
   }
 
   actualizarProducto(idMesa: number, producto: Producto): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/cuentas/mesa/${idMesa}/producto/${producto.id}`, producto);
+    return this.http.put<void>(
+      `${this.apiUrl}/cuentas/mesa/${idMesa}/producto/${producto.id}`,
+      producto
+    );
   }
 
   eliminarProducto(idMesa: number, idProducto: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/cuentas/mesa/${idMesa}/producto/${idProducto}`);
+    return this.http.delete<void>(
+      `${this.apiUrl}/cuentas/mesa/${idMesa}/producto/${idProducto}`
+    );
   }
 }

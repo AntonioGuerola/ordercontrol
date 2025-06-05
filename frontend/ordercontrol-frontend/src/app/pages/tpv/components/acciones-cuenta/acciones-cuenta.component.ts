@@ -33,9 +33,18 @@ export class AccionesCuentaComponent {
       return;
     }
 
-    this.accionesCuentaService.cobrarCuenta(this.mesa.id).subscribe(() => {
-      alert('Cuenta cobrada correctamente.');
-      this.cuentaCobrada.emit();
+    this.accionesCuentaService.cobrarCuenta(this.mesa.id).subscribe({
+      next: () => {
+        alert('Cuenta cobrada correctamente.');
+        this.cuentaCobrada.emit();
+      },
+      error: (error) => {
+        const mensaje =
+          error?.error?.message ||
+          error?.message ||
+          'Error al cobrar la cuenta.';
+        alert(mensaje);
+      },
     });
   }
 

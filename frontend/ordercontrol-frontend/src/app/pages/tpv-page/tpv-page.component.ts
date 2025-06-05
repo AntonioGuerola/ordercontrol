@@ -36,8 +36,16 @@ export class TpvPageComponent {
   constructor(private cdr: ChangeDetectorRef) {}
 
   seleccionarMesa(mesa: Mesa) {
-    this.mesaSeleccionada = mesa;
-    this.cuentaComponent.establecerMesa(mesa);
+    if (this.mesaSeleccionada?.id === mesa.id) {
+      this.mesaSeleccionada = null;
+      setTimeout(() => {
+        this.mesaSeleccionada = mesa;
+        this.cuentaComponent.establecerMesa(mesa);
+      });
+    } else {
+      this.mesaSeleccionada = mesa;
+      this.cuentaComponent.establecerMesa(mesa);
+    }
   }
 
   onProductoSeleccionado(producto: Producto) {
@@ -66,7 +74,6 @@ export class TpvPageComponent {
   }
 
   onCuentaCobrada() {
-    this.cuentaComponent.limpiarCuenta();
     this.mesaSeleccionada = null;
     setTimeout(() => {
       this.refrescarMesas();

@@ -1,11 +1,15 @@
 package com.antonio.ordercontrol.mappers;
 
 import com.antonio.ordercontrol.dtos.CuentaDTO;
+import com.antonio.ordercontrol.dtos.CuentaProductoDTO;
 import com.antonio.ordercontrol.models.Cuenta;
 import com.antonio.ordercontrol.models.Mesa;
 import com.antonio.ordercontrol.repositories.MesaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class CuentaMapper {
@@ -19,6 +23,18 @@ public class CuentaMapper {
         cuentaDTO.setSumaTotal(cuenta.getSumaTotal());
         cuentaDTO.setHoraCobro(cuenta.getHoraCobro());
         cuentaDTO.setMetodoPago(cuenta.getMetodoPago());
+
+        List<CuentaProductoDTO> productos = cuenta.getIdMesa().getComandas().stream()
+                .flatMap(comanda -> comanda.getComandaproductos().stream())
+                .map(cp -> new CuentaProductoDTO(
+                        cp.getProducto().getNombre(),
+                        cp.getPrecioUnitario(),
+                        cp.getCantidad(),
+                        cp.getProducto().getTipo()
+                ))
+                .collect(Collectors.toList());
+
+        cuentaDTO.setProductos(productos);
         return cuentaDTO;
     }
 
