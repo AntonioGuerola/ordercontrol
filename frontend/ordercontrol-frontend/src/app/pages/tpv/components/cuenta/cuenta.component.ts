@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { CuentaService } from '../../../../core/services/cuenta.service';
 import { Producto } from '../../../../core/models/producto';
 import { Mesa } from '../../../../core/models/mesa';
+import { OnChanges, SimpleChanges } from '@angular/core';
 
 @Component({
   selector: 'app-cuenta',
@@ -11,8 +12,7 @@ import { Mesa } from '../../../../core/models/mesa';
   templateUrl: './cuenta.component.html',
   styleUrls: ['./cuenta.component.css'],
 })
-export class CuentaComponent implements OnInit {
-  @Input() idMesa!: number;
+export class CuentaComponent implements OnInit, OnChanges {
   @Input() mesa!: Mesa | null;
 
   mesaNumero: number | null = null;
@@ -22,22 +22,32 @@ export class CuentaComponent implements OnInit {
   constructor(private cuentaService: CuentaService) {}
 
   ngOnInit(): void {
-    this.cargarProductos();
+    if (this.mesa?.id) {
+      this.cargarProductos();
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['mesa'] && changes['mesa'].currentValue === null) {
+      this.limpiarCuenta();
+    }
   }
 
   cargarProductos(): void {
-    this.cuentaService.obtenerProductos(this.idMesa).subscribe((productos) => {
+    if (!this.mesa?.id) return;
+
+    this.cuentaService.obtenerProductos(this.mesa.id).subscribe((productos) => {
       this.productosConfirmados = productos;
     });
   }
 
   agregarProductoPendiente(producto: Producto) {
     if (!this.mesa) {
-      alert("Primero seleccione una mesa.");
+      alert('Primero seleccione una mesa.');
       return;
     }
 
-    const existente = this.productosPendientes.find(p => p.id === producto.id);
+    const existente = this.productosPendientes.find((p) => p.id === producto.id);
 
     if (existente) {
       existente.cantidad++;
@@ -57,7 +67,7 @@ export class CuentaComponent implements OnInit {
   }
 
   eliminarPendiente(producto: Producto): void {
-    this.productosPendientes = this.productosPendientes.filter(p => p.id !== producto.id);
+    this.productosPendientes = this.productosPendientes.filter((p) => p.id !== producto.id);
   }
 
   calcularSubtotal(): number {
@@ -82,8 +92,9 @@ export class CuentaComponent implements OnInit {
   }
 
   cargarProductosConfirmados() {
-    if (!this.mesa) return;
-    this.cuentaService.obtenerProductos(this.mesa.id).subscribe(productos => {
+    if (!this.mesa?.id) return;
+
+    this.cuentaService.obtenerProductos(this.mesa.id).subscribe((productos) => {
       this.productosConfirmados = productos;
     });
   }

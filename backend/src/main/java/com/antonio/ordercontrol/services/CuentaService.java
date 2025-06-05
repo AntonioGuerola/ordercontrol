@@ -8,6 +8,7 @@ import com.antonio.ordercontrol.models.Comanda;
 import com.antonio.ordercontrol.models.Cuenta;
 import com.antonio.ordercontrol.models.EstadoComanda;
 import com.antonio.ordercontrol.models.Mesa;
+import com.antonio.ordercontrol.repositories.ComandaProductoRepository;
 import com.antonio.ordercontrol.repositories.ComandaRepository;
 import com.antonio.ordercontrol.repositories.CuentaRepository;
 import com.antonio.ordercontrol.repositories.MesaRepository;
@@ -30,6 +31,9 @@ public class CuentaService {
 
     @Autowired
     private MesaRepository mesaRepository;
+
+    @Autowired
+    private ComandaProductoRepository comandaProductoRepository;
 
     @Autowired
     private RegistroCSVService registroCSVService;
@@ -55,7 +59,14 @@ public class CuentaService {
         Mesa mesa = mesaRepository.findById(idMesa)
                 .orElseThrow(() -> new RuntimeException("Mesa no encontrada."));
 
-        List<Comanda> comandas = comandaRepository.findByIdMesa_Id(mesa.getId().longValue());
+        List<Comanda> comandas = comandaRepository.findByIdMesa_Id(idMesa);
+
+        boolean sinProductos = comandas.isEmpty() || comandas.stream()
+                .allMatch(c -> c.getComandaproductos().isEmpty());
+
+        if (sinProductos) {
+            throw new RuntimeException("No hay productos en la mesa para cobrar.");
+        }
 
         BigDecimal sumaTotal = comandas.stream()
                 .flatMap(c -> c.getComandaproductos().stream())
@@ -75,12 +86,28 @@ public class CuentaService {
             throw new RuntimeException("Error al generar CSV: " + e.getMessage(), e);
         }
 
+        List<CuentaProductoDTO> productos = comandas.stream()
+                .flatMap(c -> c.getComandaproductos().stream())
+                .map(cp -> new CuentaProductoDTO(
+                        cp.getProducto().getNombre(),
+                        cp.getPrecioUnitario(),
+                        cp.getCantidad(),
+                        cp.getProducto().getTipo()
+                ))
+                .collect(Collectors.toList());
+
+        comandaRepository.deleteAllInBatch(comandas);
+
+        cuentaRepository.delete(cuentaGuardada);
+
         mesa.setEstado("LIBRE");
         mesaRepository.save(mesa);
 
-        comandaRepository.deleteAll(comandas);
-
-        return cuentaMapper.toCuentaDTO(cuentaGuardada);
+        CuentaDTO cuentaDTO = new CuentaDTO();
+        cuentaDTO.setIdMesa(mesa.getId().longValue());
+        cuentaDTO.setSumaTotal(sumaTotal);
+        cuentaDTO.setProductos(productos);
+        return cuentaDTO;
     }
 
     public CuentaDTO updateCuenta(Long id, CuentaDTO nuevaCuenta) throws RecordNotFoundException {

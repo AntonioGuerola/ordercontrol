@@ -20,23 +20,35 @@ export class AccionesCuentaService {
     return new Observable((observer) => {
       this.http
         .post(`${this.apiUrl}/cuentas/generar/mesa/${idMesa}`, {})
-        .subscribe((cuenta: any) => {
-          const csvData = this.convertirCuentaACSV(cuenta);
-          const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
-          const fecha = new Date().toISOString().split('T')[0];
-          saveAs(blob, `${fecha}.csv`);
+        .subscribe({
+          next: (cuenta: any) => {
+            if (!cuenta || !cuenta.productos) {
+              observer.error(new Error('Cuenta inválida o vacía.'));
+              return;
+            }
 
-          this.http.delete(`${this.apiUrl}/mesas/${idMesa}`).subscribe(() => {
+            const csvData = this.convertirCuentaACSV(cuenta);
+            const blob = new Blob([csvData], {
+              type: 'text/csv;charset=utf-8;',
+            });
+            const fecha = new Date().toISOString().split('T')[0];
+            saveAs(blob, `${fecha}.csv`);
+
             this.http
-              .post(`${this.apiUrl}/mesas`, {
-                numero: cuenta.idMesa,
-                tipo: cuenta.tipoMesa,
-              })
-              .subscribe(() => {
-                observer.next();
-                observer.complete();
+              .put(`${this.apiUrl}/mesas/${idMesa}/liberar`, {})
+              .subscribe({
+                next: () => {
+                  observer.next();
+                  observer.complete();
+                },
+                error: (err) => {
+                  observer.error(err);
+                },
               });
-          });
+          },
+          error: (err) => {
+            observer.error(err);
+          },
         });
     });
   }
@@ -58,12 +70,26 @@ export class AccionesCuentaService {
 
   private convertirCuentaACSV(cuenta: any): string {
     let csv = 'Hora Cobro, Monto Total, Método de Pago\n';
-    csv += `${cuenta.horaCobro}, ${cuenta.sumaTotal}, ${cuenta.metodoPago}\n\n`;
+    const hora = cuenta?.horaCobro || '';
+    const monto = cuenta?.sumaTotal?.toString().replace(',', '.') || '0.00';
+    const metodo = cuenta?.metodoPago || '';
+
+    csv += `${hora}, ${monto}, ${metodo}\n\n`;
     csv += 'Producto, Precio Unitario, Cantidad, Total\n';
-    cuenta.productos.forEach((producto: any) => {
-      const total = producto.precioUnitario * producto.cantidad;
-      csv += `${producto.nombre}, ${producto.precioUnitario}, ${producto.cantidad}, ${total}\n`;
+
+    (cuenta?.productos || []).forEach((producto: any) => {
+      if (!producto) return;
+
+      const nombre = producto.nombre || '';
+      const precioUnitario = parseFloat(
+        producto.precio?.toString().replace(',', '.') || '0'
+      );
+      const cantidad = producto.cantidad || 0;
+      const total = (precioUnitario * cantidad).toFixed(2);
+
+      csv += `${nombre}, ${precioUnitario}, ${cantidad}, ${total}\n`;
     });
+
     return csv;
   }
 

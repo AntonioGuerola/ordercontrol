@@ -1,7 +1,9 @@
 package com.antonio.ordercontrol.dtos;
 
+
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 
 public class CuentaDTO {
     private Long id;
@@ -9,6 +11,7 @@ public class CuentaDTO {
     private BigDecimal sumaTotal;
     private Instant horaCobro;
     private String metodoPago;
+    private List<CuentaProductoDTO> productos;
 
     public Long getId() {
         return id;
@@ -48,5 +51,13 @@ public class CuentaDTO {
 
     public void setMetodoPago(String metodoPago) {
         this.metodoPago = metodoPago;
+    }
+
+    public List<CuentaProductoDTO> getProductos() {
+        return productos;
+    }
+
+    public void setProductos(List<CuentaProductoDTO> productos) {
+        this.productos = productos;
     }
 }

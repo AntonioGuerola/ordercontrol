@@ -128,4 +128,10 @@ public class MesaService {
         mesaRepository.save(mesa);
     }
 
+    public void liberarMesa(Long id) {
+        Mesa mesa = mesaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Mesa no encontrada con id: " + id));
+        mesa.setEstado("LIBRE");
+        mesaRepository.save(mesa);
+    }
 }

@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/cuentas")
@@ -41,9 +42,16 @@ public class CuentaController {
     }
 
     @PostMapping("/generar/mesa/{idMesa}")
-    public ResponseEntity<CuentaDTO> generarCuenta(@PathVariable Long idMesa){
-        CuentaDTO cuentaDTO = cuentaService.generarCuentaParaMesa(idMesa);
-        return new ResponseEntity<>(cuentaDTO, HttpStatus.CREATED);
+    public ResponseEntity<?> generarCuenta(@PathVariable Long idMesa) {
+        try {
+            CuentaDTO cuentaDTO = cuentaService.generarCuentaParaMesa(idMesa);
+            return new ResponseEntity<>(cuentaDTO, HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            return ResponseEntity
+                    .badRequest()
+                    .header("Content-Type", "application/json")
+                    .body(Map.of("message", e.getMessage()));
+        }
     }
 
     @PutMapping("/{id}")
