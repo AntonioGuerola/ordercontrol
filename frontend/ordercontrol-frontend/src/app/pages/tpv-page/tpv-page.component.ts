@@ -8,6 +8,7 @@ import { AccionesCuentaComponent } from '../tpv/components/acciones-cuenta/accio
 import { CuentaComponent } from '../tpv/components/cuenta/cuenta.component';
 import { Producto } from '../../core/models/producto';
 import { Mesa } from '../../core/models/mesa';
+import { AjustesButtonsComponent } from "../tpv/components/ajustes-buttons/ajustes-buttons.component";
 
 @Component({
   selector: 'app-tpv-page',
@@ -19,7 +20,8 @@ import { Mesa } from '../../core/models/mesa';
     ProductoGridComponent,
     AccionesCuentaComponent,
     CuentaComponent,
-  ],
+    AjustesButtonsComponent
+],
   standalone: true,
   templateUrl: './tpv-page.component.html',
   styleUrl: './tpv-page.component.css',

@@ -1,27 +1,32 @@
 <div class="h-screen bg-gray-50 flex flex-col overflow-hidden">
   <div class="bg-white border-b border-gray-200 p-4">
-    <app-mesa-tipo-selector
-      (tipoSeleccionado)="actualizarTipoMesaSeleccionado($event)"
-    ></app-mesa-tipo-selector>
+    <div class="flex items-center justify-between">
+      <div>
+        <app-mesa-tipo-selector
+          (tipoSeleccionado)="actualizarTipoMesaSeleccionado($event)"
+        ></app-mesa-tipo-selector>
+      </div>
+      <div>
+        <app-ajustes-buttons></app-ajustes-buttons>
+      </div>
+    </div>
   </div>
 
   <div class="flex-1 flex overflow-hidden">
-<div class="w-80 h-full bg-white border-r border-gray-200 flex flex-col">
-  <app-acciones-cuenta
-    [mesa]="mesaSeleccionada"
-    [productosPendientes]="cuentaComponent?.productosPendientes || []"
-    (mesaAnulada)="mesaAnulada()"
-    (productosEnviados)="onProductosEnviados()"
-    (cuentaCobrada)="onCuentaCobrada()"
-    (refrescarEstadoMesa)="refrescarMesas()"
-  ></app-acciones-cuenta>
+    <div class="w-80 h-full bg-white border-r border-gray-200 flex flex-col">
+      <app-acciones-cuenta
+        [mesa]="mesaSeleccionada"
+        [productosPendientes]="cuentaComponent?.productosPendientes || []"
+        (mesaAnulada)="mesaAnulada()"
+        (productosEnviados)="onProductosEnviados()"
+        (cuentaCobrada)="onCuentaCobrada()"
+        (refrescarEstadoMesa)="refrescarMesas()"
+      ></app-acciones-cuenta>
 
-  <!-- Cuenta ocupa todo el espacio restante -->
-  <div class="flex-1 overflow-hidden">
-    <app-cuenta [mesa]="mesaSeleccionada"></app-cuenta>
-  </div>
-</div>
-
+      <div class="flex-1 overflow-hidden">
+        <app-cuenta [mesa]="mesaSeleccionada"></app-cuenta>
+      </div>
+    </div>
 
     <div class="flex-1 flex flex-col overflow-hidden">
       <div class="flex-1 p-4 overflow-auto">
