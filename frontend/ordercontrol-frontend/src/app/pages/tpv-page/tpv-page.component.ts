@@ -9,6 +9,7 @@ import { CuentaComponent } from '../tpv/components/cuenta/cuenta.component';
 import { Producto } from '../../core/models/producto';
 import { Mesa } from '../../core/models/mesa';
 import { AjustesButtonsComponent } from "../tpv/components/ajustes-buttons/ajustes-buttons.component";
+import { ModalAjustesCategoriasComponent } from "../tpv/components/modal-ajustes-categorias/modal-ajustes-categorias.component";
 
 @Component({
   selector: 'app-tpv-page',
@@ -20,7 +21,8 @@ import { AjustesButtonsComponent } from "../tpv/components/ajustes-buttons/ajust
     ProductoGridComponent,
     AccionesCuentaComponent,
     CuentaComponent,
-    AjustesButtonsComponent
+    AjustesButtonsComponent,
+    ModalAjustesCategoriasComponent
 ],
   standalone: true,
   templateUrl: './tpv-page.component.html',
@@ -32,8 +34,9 @@ export class TpvPageComponent {
 
   @ViewChild(MesaGridComponent) mesaGridComponent!: MesaGridComponent;
   @ViewChild(CuentaComponent) cuentaComponent!: CuentaComponent;
-
+@ViewChild('categoriaSelector') categoriaSelectorComponent!: CategoriaSelectorComponent;
   mesaSeleccionada: Mesa | null = null;
+  modalCategoriasAbierto = false;
 
   constructor(private cdr: ChangeDetectorRef) {}
 
@@ -90,5 +93,12 @@ export class TpvPageComponent {
       this.refrescarMesas();
       this.cdr.detectChanges();
     }, 0);
+  }
+
+  onCategoriasActualizadas() {
+    if (this.categoriaSelectorComponent) {
+      console.log('Recargando categorías')
+      this.categoriaSelectorComponent.cargarCategorias();
+    }
   }
 }
