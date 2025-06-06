@@ -28,7 +28,7 @@ export class CategoriaService {
     return this.http.put<Categoria>(`${this.apiUrl}/${id}`, categoria);
   }
 
-  eliminarCategoria(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
-  }
+eliminarCategoria(id: number): Observable<any> {
+  return this.http.delete(`${this.apiUrl}/${id}`, { responseType: 'text' });
+}
 }

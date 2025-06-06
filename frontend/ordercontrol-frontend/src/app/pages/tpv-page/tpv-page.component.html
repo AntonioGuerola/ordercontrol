@@ -1,4 +1,12 @@
 <div class="h-screen bg-gray-50 flex flex-col overflow-hidden">
+  <!-- MODAL DE AJUSTES DE CATEGORÍAS -->
+  <app-modal-ajustes-categorias
+    [open]="modalCategoriasAbierto"
+    (close)="modalCategoriasAbierto = false"
+    (categoriasActualizadas)="onCategoriasActualizadas()"
+  >
+  </app-modal-ajustes-categorias>
+
   <div class="bg-white border-b border-gray-200 p-4">
     <div class="flex items-center justify-between">
       <div>
@@ -7,7 +15,9 @@
         ></app-mesa-tipo-selector>
       </div>
       <div>
-        <app-ajustes-buttons></app-ajustes-buttons>
+        <app-ajustes-buttons
+          (abrirModalCategorias)="modalCategoriasAbierto = true"
+        ></app-ajustes-buttons>
       </div>
     </div>
   </div>
@@ -46,6 +56,7 @@
       <div class="h-80 bg-gray-100 border-t border-gray-200 flex flex-col">
         <div class="p-4 pb-2">
           <app-categoria-selector
+            #categoriaSelector
             (categoriaSeleccionada)="actualizarCategoriaSeleccionada($event)"
           ></app-categoria-selector>
         </div>
