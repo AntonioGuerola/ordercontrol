@@ -1,9 +1,135 @@
-<div *ngIf="open" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-  <div class="bg-white p-6 rounded shadow-lg w-[600px]">
-    <h2 class="text-xl font-bold mb-4">Ajustes de Productos</h2>
-
-    
-
-    <button class="mt-4 bg-red-500 text-white px-4 py-2 rounded" (click)="cerrar()">Cerrar</button>
+<div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50" *ngIf="open">
+  <div class="bg-white rounded-lg p-0 w-[700px] max-h-[90vh] overflow-auto shadow-lg relative">
+    <button class="absolute top-2 right-2 text-gray-500 hover:text-gray-700" (click)="cerrar()">✕</button>
+    <div class="p-6 border-b">
+      <h2 class="text-xl font-semibold">Ajustes de Productos</h2>
+    </div>
+    <div class="flex h-[500px] gap-6 p-6">
+      <!-- Panel izquierdo: Botones de acción -->
+      <div class="w-48 flex flex-col gap-2">
+        <button
+          class="flex items-center gap-2 px-4 py-2 rounded transition border"
+          [ngClass]="{'bg-blue-500 text-white': vistaActual==='crear', 'bg-white text-gray-700 border-gray-300': vistaActual!=='crear'}"
+          (click)="cambiarVista('crear')">
+          Crear Producto
+        </button>
+        <button
+          class="flex items-center gap-2 px-4 py-2 rounded transition border"
+          [ngClass]="{'bg-blue-500 text-white': vistaActual==='editar', 'bg-white text-gray-700 border-gray-300': vistaActual!=='editar'}"
+          (click)="cambiarVista('editar')">
+          Editar Producto
+        </button>
+        <button
+          class="flex items-center gap-2 px-4 py-2 rounded transition border"
+          [ngClass]="{'bg-red-500 text-white': vistaActual==='eliminar', 'bg-white text-gray-700 border-gray-300': vistaActual!=='eliminar'}"
+          (click)="cambiarVista('eliminar')">
+          Eliminar Producto
+        </button>
+      </div>
+      <!-- Panel derecho: Contenido dinámico -->
+      <div class="flex-1 p-6 bg-gray-50 rounded-lg flex flex-col justify-between">
+        <ng-container [ngSwitch]="vistaActual">
+          <!-- CREAR -->
+          <div *ngSwitchCase="'crear'" class="space-y-4">
+            <h3 class="text-lg font-semibold">Crear producto</h3>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="space-y-2">
+                <label class="block font-medium mb-1" for="nombre-crear">Nombre</label>
+                <input id="nombre-crear" [(ngModel)]="nombreProducto" class="w-full border px-3 py-2 rounded" placeholder="Ingrese el nombre del producto" />
+              </div>
+              <div class="space-y-2">
+                <label class="block font-medium mb-1" for="precio-crear">Precio</label>
+                <input id="precio-crear" [(ngModel)]="precio" class="w-full border px-3 py-2 rounded" placeholder="0,00" />
+              </div>
+            </div>
+            <div class="space-y-2">
+              <label class="block font-medium mb-1" for="descripcion-crear">Descripción</label>
+              <textarea id="descripcion-crear" [(ngModel)]="descripcion" class="w-full border px-3 py-2 rounded" rows="3" placeholder="Ingrese la descripción del producto"></textarea>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="space-y-2">
+                <label class="block font-medium mb-1" for="tipo-crear">Tipo</label>
+                <select id="tipo-crear" [(ngModel)]="tipoSeleccionado" class="w-full border px-3 py-2 rounded">
+                  <option value="" disabled>Seleccione un tipo</option>
+                  <option *ngFor="let tipo of tipos" [value]="tipo">{{ tipo }}</option>
+                </select>
+              </div>
+              <div class="space-y-2">
+                <label class="block font-medium mb-1" for="categoria-crear">Categoría</label>
+                <select id="categoria-crear" [(ngModel)]="categoriaSeleccionadaId" class="w-full border px-3 py-2 rounded">
+                  <option value="" disabled>Seleccione una categoría</option>
+                  <option *ngFor="let categoria of categorias" [value]="categoria.id">{{ categoria.nombre }}</option>
+                </select>
+              </div>
+            </div>
+            <button class="w-full bg-blue-500 text-white py-2 rounded" (click)="guardarProducto()">Guardar</button>
+            <div *ngIf="mensajeExito" class="text-green-600 text-center font-semibold mt-2">{{ mensajeExito }}</div>
+            <div *ngIf="error" class="text-red-500 text-center font-semibold mt-2">{{ error }}</div>
+          </div>
+          <!-- EDITAR -->
+          <div *ngSwitchCase="'editar'" class="space-y-4">
+            <h3 class="text-lg font-semibold">Editar producto</h3>
+            <div class="space-y-2">
+              <label class="block font-medium mb-1" for="busqueda-editar">Buscar producto</label>
+              <input id="busqueda-editar" [(ngModel)]="busquedaProducto" (input)="buscarProductos()" class="w-full border px-3 py-2 rounded" placeholder="Buscar producto..." autocomplete="off" />
+              <div *ngIf="productosFiltrados.length > 0" class="border rounded bg-white max-h-32 overflow-y-auto">
+                <div *ngFor="let producto of productosFiltrados" class="px-3 py-2 hover:bg-blue-100 cursor-pointer" (click)="seleccionarProductoEditar(producto)">
+                  {{ producto.nombre }}
+                </div>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="space-y-2">
+                <label class="block font-medium mb-1" for="nombre-editar">Nombre</label>
+                <input id="nombre-editar" [(ngModel)]="nombreProducto" class="w-full border px-3 py-2 rounded" placeholder="Ingrese el nombre del producto" />
+              </div>
+              <div class="space-y-2">
+                <label class="block font-medium mb-1" for="precio-editar">Precio</label>
+                <input id="precio-editar" [(ngModel)]="precio" class="w-full border px-3 py-2 rounded" placeholder="0,00" />
+              </div>
+            </div>
+            <div class="space-y-2">
+              <label class="block font-medium mb-1" for="descripcion-editar">Descripción</label>
+              <textarea id="descripcion-editar" [(ngModel)]="descripcion" class="w-full border px-3 py-2 rounded" rows="3" placeholder="Ingrese la descripción del producto"></textarea>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="space-y-2">
+                <label class="block font-medium mb-1" for="tipo-editar">Tipo</label>
+                <select id="tipo-editar" [(ngModel)]="tipoSeleccionado" class="w-full border px-3 py-2 rounded">
+                  <option value="" disabled>Seleccione un tipo</option>
+                  <option *ngFor="let tipo of tipos" [value]="tipo">{{ tipo }}</option>
+                </select>
+              </div>
+              <div class="space-y-2">
+                <label class="block font-medium mb-1" for="categoria-editar">Categoría</label>
+                <select id="categoria-editar" [(ngModel)]="categoriaSeleccionadaId" class="w-full border px-3 py-2 rounded">
+                  <option value="" disabled>Seleccione una categoría</option>
+                  <option *ngFor="let categoria of categorias" [value]="categoria.id">{{ categoria.nombre }}</option>
+                </select>
+              </div>
+            </div>
+            <button class="w-full bg-blue-500 text-white py-2 rounded" (click)="guardarEdicionProducto()">Guardar</button>
+            <div *ngIf="mensajeExito" class="text-green-600 text-center font-semibold mt-2">{{ mensajeExito }}</div>
+            <div *ngIf="error" class="text-red-500 text-center font-semibold mt-2">{{ error }}</div>
+          </div>
+          <!-- ELIMINAR -->
+          <div *ngSwitchCase="'eliminar'" class="space-y-4">
+            <h3 class="text-lg font-semibold">Eliminar producto</h3>
+            <div class="space-y-2">
+              <label class="block font-medium mb-1" for="busqueda-eliminar">Buscar producto</label>
+              <input id="busqueda-eliminar" [(ngModel)]="busquedaProducto" (input)="buscarProductosEliminar()" class="w-full border px-3 py-2 rounded" placeholder="Buscar producto..." autocomplete="off" />
+              <div *ngIf="productosFiltrados.length > 0" class="border rounded bg-white max-h-32 overflow-y-auto">
+                <div *ngFor="let producto of productosFiltrados" class="px-3 py-2 hover:bg-blue-100 cursor-pointer" (click)="seleccionarProductoEliminar(producto)">
+                  {{ producto.nombre }}
+                </div>
+              </div>
+            </div>
+            <button class="w-full bg-red-500 text-white py-2 rounded" (click)="eliminarProducto()">Eliminar</button>
+            <div *ngIf="mensajeExito" class="text-green-600 text-center font-semibold mt-2">{{ mensajeExito }}</div>
+            <div *ngIf="error" class="text-red-500 text-center font-semibold mt-2">{{ error }}</div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
   </div>
 </div>

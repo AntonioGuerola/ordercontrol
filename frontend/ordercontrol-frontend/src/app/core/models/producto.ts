@@ -4,4 +4,6 @@ export interface Producto {
   precio: number;
   tipo: string;
   cantidad: number;
+  idCategoria: number;
+  descripcion?: string;
 }
