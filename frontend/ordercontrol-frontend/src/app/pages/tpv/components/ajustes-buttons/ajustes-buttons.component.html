@@ -1,0 +1,25 @@
+<div class="flex justify-end gap-3">
+  <button
+    class="px-6 py-2 text-sm font-medium border rounded flex items-center gap-2"
+    (click)="modalCategoriasOpen = true">
+    Ajustes Categorías
+  </button>
+
+  <button
+    class="px-6 py-2 text-sm font-medium border rounded flex items-center gap-2"
+    (click)="modalProductosOpen = true">
+    Ajustes Productos
+  </button>
+</div>
+
+<app-modal-ajustes-categorias
+  *ngIf="modalCategoriasOpen"
+  [open]="modalCategoriasOpen"
+  (close)="cerrarModalCategorias()"
+/>
+
+<app-modal-ajustes-productos
+  *ngIf="modalProductosOpen"
+  [open]="modalProductosOpen"
+  (close)="cerrarModalProductos()"
+/>
